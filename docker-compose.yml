@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  pinto-express-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nodejs
+    container_name: pinto-express-backend
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - '3939:3939'
+    command: nodemon --watch . --exec "node" index.js
+
+networks:
+  default:
+    external:
+      name: default-net
