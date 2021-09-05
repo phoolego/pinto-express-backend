@@ -5,4 +5,5 @@ module.exports = (app) => {
     BaseController.index
   );
   app.post('/insert-user',BaseController.insertUser);
+  app.post('/login-email',BaseController.loginEmail);
 };

@@ -12,5 +12,14 @@ module.exports = {
     }catch(err){
       res.status(500).send({ message: err });
     }
+  },
+  async loginEmail(req, res){
+    try{
+      param = req.body
+      result = await UserService.loginEmail(param.email, param.password);
+      res.send(result);
+    }catch(err){
+      res.status(500).send({ message: err });
+    }
   }
 };
