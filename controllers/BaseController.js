@@ -1,17 +1,16 @@
-const ClicksendService = require('../services/ClicksendService');
-const BulkgateService = require('../services/BulkgateService');
+const UserService = require("../services/UserService");
 
 module.exports = {
   async index(req, res) {
-    res.send('CourseSquare sms OTP Express API V 1.0.0');
+    res.send('Pinto Bangkachao Express API V 1.0.0');
   },
-  async bulkgate(req, res){
+  async insertUser(req, res){
     try{
-      result = await BulkgateService.sendOTP(req.body.otp);
-      res.send(JSON.stringify(result));
-    }catch(error){
-      console.log(error);
-      res.send(error);
+      param = req.body
+      result = await UserService.insertUser(param.username, param.email, param.password, param.address, param.contact, param.role);
+      res.send(result);
+    }catch(err){
+      res.status(500).send({ message: err });
     }
   }
 };

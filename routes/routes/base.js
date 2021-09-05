@@ -4,8 +4,5 @@ module.exports = (app) => {
     '/',
     BaseController.index
   );
-  app.post(
-    '/bulkgate',
-    BaseController.bulkgate
-  );
+  app.post('/insert-user',BaseController.insertUser);
 };

@@ -3,6 +3,7 @@ const http = require('http');
 var bodyParser = require('body-parser');
 const cors = require('cors');
 require('dotenv').config();
+db = require('./config/connection');
 const fs = require('fs');
 const path = require('path');
 var app = express();
