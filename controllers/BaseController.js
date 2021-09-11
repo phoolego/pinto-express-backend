@@ -1,14 +1,22 @@
 const UserService = require("../services/UserService");
+const ProductService = require("../services/ProductService");
 
 module.exports = {
   async index(req, res) {
     res.send('Pinto Bangkachao Express API V 1.0.0');
   },
+  //User
   async insertUser(req, res){
     try{
       param = req.body
-      result = await UserService.insertUser(param.username, param.email, param.password, param.address, param.contact, param.role);
-      res.send(result);
+      if(param.username && param.email && param.password && param.address && param.contact && param.role){
+        result = await UserService.insertUser(param.username, param.email, param.password, param.address, param.contact, param.role);
+        res.send(result);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${param.username?'':' username'}${param.email?'':' email'}${param.password?'':' password'}${param.address?'':' address'}${param.contact?'':' contact'}${param.role?'':' role'}`
+        });
+      }
     }catch(err){
       res.status(500).send({ message: err });
     }
@@ -16,10 +24,25 @@ module.exports = {
   async loginEmail(req, res){
     try{
       param = req.body
-      result = await UserService.loginEmail(param.email, param.password);
+      if(param.email && param.password){
+        result = await UserService.loginEmail(param.email, param.password);
+        res.send(result);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${param.email?'':' email'}${param.password?'':' password'}`
+        });
+      }
+    }catch(err){
+      res.status(500).send({ message: err });
+    }
+  },
+  //Product
+  async getProductType(req, res){
+    try{
+      result = await ProductService.getProductType();
       res.send(result);
     }catch(err){
       res.status(500).send({ message: err });
     }
-  }
+  },
 };

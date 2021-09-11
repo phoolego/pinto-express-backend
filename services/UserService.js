@@ -5,8 +5,6 @@ module.exports = {
         try{
             const saltRounds = 10;
             const hash_pwd = bcrypt.hashSync(password, saltRounds);
-            // const match = await bcrypt.compare(password, hash_pwd);
-            // console.log(match);
             let sql = `INSERT INTO user (username, email, password, address, contact, role)
             VALUES (?, ?, ?, ?, ?, ?);`;
             return await db.pintodb.query(sql,[username, email, hash_pwd, address, contact, role]);
@@ -23,10 +21,8 @@ module.exports = {
             FROM user
             WHERE email = ?`;
             const hashPass = await db.pintodb.query(passSql,[email]);
-            console.log(hashPass[0]);
             if (hashPass.length>0){
                 const match = await bcrypt.compare(password, hashPass[0]['password']);
-                console.log(match);
                 if(match){
                     let sql = `SELECT user_id, username, email, address, contact, role
                     FROM user
