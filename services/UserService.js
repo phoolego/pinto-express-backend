@@ -30,15 +30,12 @@ module.exports = {
                     const user = (await db.pintodb.query(sql,[email]))[0];
                     return user;
                 }else{
-                    throw 'wrong password';
+                    throw new Error('wrong password');
                 }
             }else{
-                throw 'no user found';
+                throw new Error('no user found');
             }
         }catch(err){
-            if(err.code=='ER_DUP_ENTRY'){
-                throw `this email ${email} was used`;
-            }
             throw err.message;
         }
     },
