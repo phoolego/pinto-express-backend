@@ -19,7 +19,7 @@ const accessLogStream = fs.createWriteStream(
   { flags: 'a' }
 );
 
-app.listen(process.env.APP_API_PORT, () =>
+app.listen(process.env.APP_API_PORT,process.env.APP_API_IP, () =>
   console.log('server run listening on port ' + process.env.APP_API_PORT)
 );
 module.exports = app;
