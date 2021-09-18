@@ -9,12 +9,12 @@ module.exports = {
   async insertUser(req, res){
     try{
       param = req.body
-      if(param.username && param.email && param.password && param.address && param.contact && param.role){
-        result = await UserService.insertUser(param.username, param.email, param.password, param.address, param.contact, param.role);
+      if(param.firstname && param.lastname && param.email && param.password && param.address && param.contact && param.role){
+        result = await UserService.insertUser(param.firstname, param.lastname, param.email, param.password, param.address, param.contact, param.role);
         res.send(result);
       }else{
         res.status(403).send({
-          message: `missing parameter${param.username?'':' username'}${param.email?'':' email'}${param.password?'':' password'}${param.address?'':' address'}${param.contact?'':' contact'}${param.role?'':' role'}`
+          message: `missing parameter${param.firstname?'':' firstname'}${param.lastname?'':' lastname'}${param.email?'':' email'}${param.password?'':' password'}${param.address?'':' address'}${param.contact?'':' contact'}${param.role?'':' role'}`
         });
       }
     }catch(err){

@@ -1,4 +1,6 @@
 const Base = require('./routes/base');
+const Admin = require('./routes/admin');
+const Farmer = require('./routes/farmer');
 module.exports = (app) => {
   app.use(function (req, res, next) {
     res.header(
@@ -7,6 +9,7 @@ module.exports = (app) => {
     );
     next();
   });
-
   Base(app);
+  Admin(app);
+  Farmer(app);
 };
