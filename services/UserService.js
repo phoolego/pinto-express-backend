@@ -49,9 +49,9 @@ module.exports = {
                 if(hashPass[0]['role']==='FARMER' || hashPass[0]['role']==='ADMIN'){
                     const match = await bcrypt.compare(password, hashPass[0]['password']);
                     if(match){
-                        let sql = `SELECT user_id, firstname, lastname, email, address, contact, role
+                        let sql = `SELECT user.user_id, firstname, lastname, email, address, contact, role, farmer_id, farm_name, max_area
                         FROM user
-                        INNER JOIN farmer ON user.user_id = farmer.user_id
+                        LEFT JOIN farmer ON user.user_id = farmer.user_id
                         WHERE email = ?`;
                         const user = (await db.pintodb.query(sql,[email]))[0];
                         return user;
