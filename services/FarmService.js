@@ -28,7 +28,7 @@ module.exports = {
                     WHERE email = ?`;
                     const user = (await db.pintodb.query(sql,[email]))[0];
                     if(user['role']==='FARMER' || user['role']==='ADMIN'){
-                        throw new Error('you have farmer permission');
+                        throw new Error('you already have farmer permission');
                     }else if(user['role']==='REQ-FARMER'){
                         throw new Error('wait for request response');
                     }else{
