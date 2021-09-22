@@ -1,13 +1,53 @@
+const bcrypt = require('bcrypt');
 module.exports = {
     async insertFarm(farmName,maxArea,userId){
         try{
             const userRole = await db.pintodb.query(`SELECT role FROM user WHERE user_id = ?`,[userId]);
-            if(userRole[0]['role']==='FARMER' || userRole[0]['role']==='ADMIN'){
+            if(userRole[0]['role']==='FARMER' || userRole[0]['role']==='ADMIN' || userRole[0]['role']==='REQ-FARMER'){
                 let sql = `INSERT INTO farmer (farm_name, max_area, user_id)
                 VALUES (?, ?, ?);`;
                 return await db.pintodb.query(sql,[farmName, maxArea, userId]);
             }else{
                 throw new Error('this userId is not a farmer');
+            }
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async requestFarmerRole(email,password){
+        try{
+            let passSql = `SELECT password
+            FROM user
+            WHERE email = ?`;
+            const hashPass = await db.pintodb.query(passSql,[email]);
+            if (hashPass.length>0){
+                const match = await bcrypt.compare(password, hashPass[0]['password']);
+                if(match){
+                    let sql = `SELECT user_id, role
+                    FROM user
+                    WHERE email = ?`;
+                    const user = (await db.pintodb.query(sql,[email]))[0];
+                    if(user['role']==='FARMER' || user['role']==='ADMIN'){
+                        throw new Error('you have farmer permission');
+                    }else if(user['role']==='REQ-FARMER'){
+                        throw new Error('wait for request response');
+                    }else{
+                        sql = `UPDATE user 
+                        SET role='REQ-FARMER'
+                        WHERE user_id=?;`;
+                        await db.pintodb.query(sql,[user['user_id']]);
+                        return (await db.pintodb.query(
+                            `SELECT user_id, role
+                            FROM user
+                            WHERE user_id = ?`,
+                            [user['user_id']]
+                        ))[0];
+                    }
+                }else{
+                    throw new Error('wrong password');
+                }
+            }else{
+                throw new Error('no user found');
             }
         }catch(err){
             throw err.message;
@@ -23,14 +63,4 @@ module.exports = {
             throw err.message;
         }
     },
-    async getFarmProduct(farmerId){
-        try{
-            let sql = `SELECT product_id, area, plant_date, predict_harvest_date, harvest_date, harvest_amount, predict_amount, type_of_product, farmer_id 
-            FROM product
-            WHERE farmer_id=?;`;
-            return await db.pintodb.query(sql,[farmerId]);
-        }catch(err){
-            throw err.message;
-        }
-    }
 }
