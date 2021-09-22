@@ -10,4 +10,5 @@ module.exports = (app) => {
 
   app.get('/farmer-product',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.getFarmerProduct);
   app.post('/farmer-product/insert',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.insertFarmerProduct);
+  app.put('/farmer-product/harvest',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.harvestFarmerProduct);
 };
