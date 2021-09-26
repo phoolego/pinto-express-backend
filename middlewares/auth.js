@@ -72,10 +72,34 @@ adminAuthorization = (req, res, next) => {
     }
   );
 };
+farmOwner = (req, res, next) => {
+  const userId = req.headers['userid'];
+  const farmerId = req.headers['farmerid'];
+  if (!userId || !farmerId) {
+    return res.status(403).send({ message: `No${userId?'':' userId'}${farmerId?'':' farmerId'} provided!` });
+  }
+  db.pintodb.query(
+    'SELECT user_id FROM farmer WHERE user_id = ? AND farmer_id = ?',
+    [userId,farmerId],
+    (err, result) => {
+      if(err){
+        console.log(err);
+        return res.status(500).send({ message: 'authorize error' });
+      }
+      if (result.length == 0) {
+        return res.status(401).send({ message: 'unauthorize' });
+      } else{
+        req.farmerId = farmerId;
+        next();
+      }
+    }
+  );
+};
 
 const auth = {
   authorization,
   farmerAuthorization,
   adminAuthorization,
+  farmOwner
 };
 module.exports = auth;
