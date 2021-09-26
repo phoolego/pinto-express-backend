@@ -1,7 +1,7 @@
 module.exports={
     async getFarmerProduct(farmerId){
         try{
-            let sql = `SELECT product_id, area, plant_date, predict_harvest_date, harvest_date, harvest_amount, predict_amount, type_of_product, farmer_id 
+            let sql = `SELECT product_id, area, plant_date, predict_harvest_date, harvest_date, harvest_amount, predict_amount, type_of_product, status, farmer_id 
             FROM product
             WHERE farmer_id=?;`;
             return await db.pintodb.query(sql,[farmerId]);
