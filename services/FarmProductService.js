@@ -42,5 +42,53 @@ module.exports={
         }catch(err){
             throw err.message;
         }
+    },
+    async disposedProduct(productId){
+        try{
+            let sql = `UPDATE product
+            SET status=?
+            WHERE product_id=?;`;
+            return await db.pintodb.query(sql,['DISPOSED',productId]);
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async getSendStockProduct(productId){
+        try{
+            let sql = `SELECT ssp_id, ssp_amount, ssp_price, ssp_status, ssp_tran_pic
+            FROM send_stock_product
+            WHERE product_id=?`;
+            return await db.pintodb.query(sql,[productId]); 
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async insertSendStockProduct(productId,sspAmount,sspPrice){
+        try{
+            let sql = `SELECT predict_amount,harvest_amount 
+            FROM product
+            WHERE product_id=? AND NOT status = 'DISPOSED';`;
+            const product = await db.pintodb.query(sql,[productId]);
+            if(product.length>0){
+                let totalSentProduct = 0;
+                sql = `SELECT ssp_amount 
+                FROM send_stock_product
+                WHERE product_id=?;`;
+                const sentProducts = await db.pintodb.query(sql,[productId]);
+                sentProducts.forEach(product => totalSentProduct+=product['ssp_amount']);
+                if((product[0]['harvest_amount'] && product[0]['harvest_amount']-totalSentProduct>=sspAmount)||
+                (product[0]['predict_amount'] && product[0]['predict_amount']-totalSentProduct>=sspAmount)){
+                    sql = `INSERT INTO send_stock_product (product_id, ssp_amount, ssp_price, ssp_status)
+                    VALUE(?,?,?,?);`;
+                    return await db.pintodb.query(sql,[productId,sspAmount,sspPrice,'PREPARE']);
+                }else{
+                    throw new Error('This product does not have enough number to send');
+                }
+            }else{
+                throw new Error('This product is not available');
+            }
+        }catch(err){
+            throw err.message;
+        }
     }
 }
