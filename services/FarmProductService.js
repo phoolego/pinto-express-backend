@@ -1,3 +1,4 @@
+const StockService = require("../services/StockService");
 module.exports={
     async getFarmerProduct(farmerId){
         try{
@@ -65,8 +66,9 @@ module.exports={
     },
     async insertSendStockProduct(productId,sspAmount,sspPrice){
         try{
-            let sql = `SELECT predict_amount,harvest_amount 
+            let sql = `SELECT predict_amount,harvest_amount ,type_of_product.name
             FROM product
+            INNER JOIN type_of_product ON product.type_of_product = type_of_product.name
             WHERE product_id=? AND NOT status = 'DISPOSED';`;
             const product = await db.pintodb.query(sql,[productId]);
             if(product.length>0){
@@ -80,7 +82,9 @@ module.exports={
                 (product[0]['predict_amount'] && product[0]['predict_amount']-totalSentProduct>=sspAmount)){
                     sql = `INSERT INTO send_stock_product (product_id, ssp_amount, ssp_price, ssp_status)
                     VALUE(?,?,?,?);`;
-                    return await db.pintodb.query(sql,[productId,sspAmount,sspPrice,'PREPARE']);
+                    const sspResult = await db.pintodb.query(sql,[productId,sspAmount,sspPrice,'PREPARE']);
+                    const StockResult = await StockService.addPreorderStock(product[0]['name'],sspAmount);
+                    return{sspResult,StockResult};
                 }else{
                     throw new Error('This product does not have enough number to send');
                 }
