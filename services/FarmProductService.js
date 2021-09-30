@@ -94,5 +94,28 @@ module.exports={
         }catch(err){
             throw err.message;
         }
+    },
+    async cancelSendStockProduct(sspId){
+        try{
+            let sql = `SELECT ssp_amount, ssp_status, type_of_product
+            FROM send_stock_product
+            INNER JOIN product ON product.product_id = send_stock_product.product_id
+            WHERE ssp_id=?;`;
+            const product = await db.pintodb.query(sql,[sspId]);
+            if(product.length>0){
+                if(product[0]['ssp_status']=='PREPARE'){
+                    await StockService.cancelStock(product[0]['type_of_product'],ssp_amount);
+                    sql = `DELETE FROM send_stock_product
+                    WHERE ssp_id=?;`;
+                    return await db.pintodb.query(sql,[sspId]);
+                }else{
+                    throw new Error('This send strock cannot be cancel');
+                }
+            }else{
+                throw new Error('Invalid sspId');
+            }
+        }catch(err){
+            throw err.message;
+        }
     }
 }
