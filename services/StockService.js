@@ -54,5 +54,34 @@ module.exports={
         }catch(err){
             throw err.message
         }
+    },
+    async getStockList(){
+        try{
+            let sql = `SELECT name, name_eng, selling_amount, preorder_amount, unit
+            FROM type_of_product
+            INNER JOIN stock ON type_of_product.name = stock.product_type;`;
+            return await db.pintodb.query(sql,[]);
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async getStockDetail(ProductType){
+        try{
+            let sql = `SELECT name, name_eng, selling_amount, preorder_amount, unit
+            FROM type_of_product
+            INNER JOIN stock ON type_of_product.name = stock.product_type
+            WHERE stock.product_type = ?;`;
+            const detail = (await db.pintodb.query(sql,[ProductType]))[0];
+            sql = `SELECT farmer.farmer_id, farmer.farm_name, send_stock_product.ssp_status, sum(ssp_amount) AS amount
+            FROM farmer
+            INNER JOIN product ON product.farmer_id = farmer.farmer_id
+            INNER JOIN send_stock_product ON send_stock_product.product_id = product.product_id
+            WHERE NOT product.status = 'DISPOSED' AND product.type_of_product = ?
+            GROUP BY farmer.farmer_id, send_stock_product.ssp_status;`;
+            const farmers = await db.pintodb.query(sql,[ProductType]);
+            return {...detail,farmers};
+        }catch(err){
+            throw err.message
+        }
     }
 }

@@ -63,7 +63,6 @@ module.exports = {
     async getSendStockProduct(req, res){
         try{
             const param = req.query;
-            console.log(req);
             if(param.productId){
                 result = await FarmProductService.getSendStockProduct(param.productId);
                 res.send(result);
