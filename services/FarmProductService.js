@@ -17,7 +17,7 @@ module.exports={
             FROM product
             INNER JOIN type_of_product ON  product.type_of_product = type_of_product.name
             WHERE productId=?;`;
-            return await db.pintodb.query(sql,[productId]);
+            return (await db.pintodb.query(sql,[productId]))[0];
         }catch(err){
             throw err.message;
         }
