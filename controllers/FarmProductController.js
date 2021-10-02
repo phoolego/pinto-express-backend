@@ -1,3 +1,4 @@
+const { getFarmerProductDetail } = require("../services/FarmProductService");
 const FarmProductService = require("../services/FarmProductService");
 module.exports = {
     async getFarmerProduct(req, res){
@@ -7,7 +8,20 @@ module.exports = {
                 result = await FarmProductService.getFarmerProduct(farmerId);
                 res.send(result);
             }else{
-                res.status(403).send({message: 'missing parameter userId'});
+                res.status(403).send({message: 'missing parameter farmerId'});
+            }
+        }catch(err){
+            res.status(500).send({ message: err });
+        }
+    },
+    async getFarmerProductDetail(req, res){
+        try{
+            const productId = req.query.productId;
+            if(productId){
+                result = await FarmProductService.getFarmerProductDetail(productId);
+                res.send(result);
+            }else{
+                res.status(403).send({message: 'missing parameter productId'});
             }
         }catch(err){
             res.status(500).send({ message: err });

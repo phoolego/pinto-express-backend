@@ -2,11 +2,22 @@ const StockService = require("../services/StockService");
 module.exports={
     async getFarmerProduct(farmerId){
         try{
-            let sql = `SELECT product_id, area, plant_date, predict_harvest_date, harvest_date, harvest_amount, predict_amount, type_of_product, status, farmer_id, price_buy, unit
+            let sql = `SELECT product_id, plant_date, type_of_product, status
             FROM product
             INNER JOIN type_of_product ON  product.type_of_product = type_of_product.name
             WHERE farmer_id=?;`;
             return await db.pintodb.query(sql,[farmerId]);
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async getFarmerProductDetail(productId){
+        try{
+            let sql = `SELECT product_id, area, plant_date, predict_harvest_date, harvest_date, harvest_amount, predict_amount, type_of_product, status, farmer_id, price_buy, unit
+            FROM product
+            INNER JOIN type_of_product ON  product.type_of_product = type_of_product.name
+            WHERE productId=?;`;
+            return await db.pintodb.query(sql,[productId]);
         }catch(err){
             throw err.message;
         }
