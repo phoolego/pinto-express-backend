@@ -68,9 +68,11 @@ module.exports={
     },
     async getSendStockProduct(productId){
         try{
-            let sql = `SELECT ssp_id, ssp_amount, ssp_price, ssp_status, ssp_tran_pic
+            let sql = `SELECT ssp_id, ssp_amount, ssp_price, ssp_status, ssp_tran_pic, unit, name, plant_date
             FROM send_stock_product
-            WHERE product_id=?
+            JOIN product ON send_stock_product.product_id = product.product_id
+            JOIN type_of_product ON product.type_of_product = type_of_product.name
+            WHERE product.product_id=?
             ORDER BY ssp_id desc`;
             return await db.pintodb.query(sql,[productId]); 
         }catch(err){
@@ -93,9 +95,11 @@ module.exports={
                 sentProducts.forEach(product => totalSentProduct+=product['ssp_amount']);
                 if((product[0]['harvest_amount'] && product[0]['harvest_amount']-totalSentProduct>=sspAmount)||
                 (product[0]['predict_amount'] && product[0]['predict_amount']-totalSentProduct>=sspAmount)){
-                    sql = `INSERT INTO send_stock_product (product_id, ssp_amount, ssp_price, ssp_status)
-                    VALUE(?,?,?,?);`;
-                    const sspResult = await db.pintodb.query(sql,[productId,sspAmount,sspPrice,'PREPARE']);
+                    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+                    var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
+                    sql = `INSERT INTO send_stock_product (product_id, ssp_amount, ssp_price, ssp_status,ssp_create_date)
+                    VALUE(?,?,?,?,?);`;
+                    const sspResult = await db.pintodb.query(sql,[productId,sspAmount,sspPrice,'PREPARE',localISOTime]);
                     const StockResult = await StockService.addPreorderStock(product[0]['name'],sspAmount);
                     return{sspResult,StockResult};
                 }else{
