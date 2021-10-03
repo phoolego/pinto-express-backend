@@ -134,5 +134,29 @@ module.exports={
         }catch(err){
             throw err.message;
         }
-    }
+    },
+    async deliveredSendStockProduct(sspId){
+        try{
+            let sql = `SELECT ssp_status, type_of_product, ssp_amount,
+            FROM send_stock_product
+            INNER JOIN product ON product.product_id = send_stock_product.product_id
+            WHERE ssp_id=?;`;
+            const ssp = (await db.pintodb.query(sql,[sspId]))[0];
+            if(ssp){
+                if(ssp['ssp_status']=='PREPARE'){
+                    await StockService.setPreorderToSell(ssp['type_of_product'],ssp['ssp_amount'],ssp['ssp_amount']);
+                    sql = `UPDATE send_stock_product
+                    SET ssp_status='DELIVERED'
+                    WHERE ssp_id=?;`;
+                    return await db.pintodb.query(sql,[sspId]);
+                }else{
+                    throw new Error('This send strock cannot deliver');
+                }
+            }else{
+                throw new Error('Invalid sspId');
+            }
+        }catch(err){
+            throw err.message;
+        }
+    },
 }
