@@ -71,7 +71,7 @@ module.exports={
             let sql = `SELECT ssp_id, ssp_amount, ssp_price, ssp_status, ssp_tran_pic
             FROM send_stock_product
             WHERE product_id=?
-            ORDER BY ssp_id`;
+            ORDER BY ssp_id desc`;
             return await db.pintodb.query(sql,[productId]); 
         }catch(err){
             throw err.message;
