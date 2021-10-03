@@ -59,7 +59,7 @@ module.exports = {
             res.status(500).send({ message: err });
         }
     },
-    async dispostFarmerProduct(req, res){
+    async disposeFarmerProduct(req, res){
         try{
             const param = req.body;
             if(param.productId){
