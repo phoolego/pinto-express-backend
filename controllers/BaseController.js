@@ -4,8 +4,8 @@ const ProductService = require("../services/ProductService");
 module.exports = {
   async index(req, res) {
     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-    var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
-    res.send(`Pinto Bangkachao Express API V 1.0.0 ${(new Date(Date.now())).toISOString()}`);
+    var localISOTime = (new Date(Date.now() - tzoffset)).toISOString();
+    res.send(`Pinto Bangkachao Express API V 1.0.0 ${localISOTime}`);
   },
   //User
   async insertUser(req, res){
