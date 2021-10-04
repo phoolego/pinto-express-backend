@@ -121,7 +121,7 @@ module.exports={
             const product = await db.pintodb.query(sql,[sspId]);
             if(product.length>0){
                 if(product[0]['ssp_status']=='PREPARE'){
-                    await StockService.cancelStock(product[0]['type_of_product'],ssp_amount);
+                    await StockService.cancelStock(product[0]['type_of_product'],product[0]['ssp_amount']);
                     sql = `DELETE FROM send_stock_product
                     WHERE ssp_id=?;`;
                     return await db.pintodb.query(sql,[sspId]);
