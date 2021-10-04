@@ -5,7 +5,8 @@ module.exports = {
   async index(req, res) {
     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
     var localISOTime = (new Date(Date.now() - tzoffset)).toISOString();
-    res.send(`Pinto Bangkachao Express API V 1.0.0 ${localISOTime} offset = ${(new Date()).getTimezoneOffset()}`);
+    res.send(`Pinto Bangkachao Express API V 1.0.0 ${localISOTime} offset = ${(new Date()).getTimezoneOffset()}
+    ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
   },
   //User
   async insertUser(req, res){
