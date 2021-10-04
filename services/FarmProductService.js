@@ -68,7 +68,7 @@ module.exports={
     },
     async getSendStockProduct(productId){
         try{
-            let sql = `SELECT ssp_id, ssp_amount, ssp_price, ssp_status, ssp_tran_pic, ssp_create_date,unit, name, plant_date
+            let sql = `SELECT ssp_id, ssp_amount, ssp_price, ssp_status, ssp_tran_pic, ssp_create_date, ssp_delivered_date, unit, name, plant_date
             FROM send_stock_product
             JOIN product ON send_stock_product.product_id = product.product_id
             JOIN type_of_product ON product.type_of_product = type_of_product.name
