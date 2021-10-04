@@ -16,4 +16,5 @@ module.exports = (app) => {
 
   app.get('/send-stock-product',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.getSendStockProduct);
   app.post('/send-stock-product/insert',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.insertSendStockProduct);
+  app.delete('/send-stock-product/cancel',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.cancelSendStockProduct);
 };

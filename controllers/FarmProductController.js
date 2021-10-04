@@ -103,5 +103,20 @@ module.exports = {
         }catch(err){
             res.status(500).send({ message: err });
         }
+    },
+    async cancelSendStockProduct(req, res){
+        try{
+            const param = req.body;
+            if(param.sspId){
+                result = await FarmProductService.cancelSendStockProduct(param.sspId);
+                res.send(result);
+            }else{
+                res.status(403).send({
+                    message: `missing parameter${param.sspId?'':' sspId'}`,
+                });
+            }
+        }catch(err){
+            res.status(500).send({ message: err });
+        }
     }
 }
