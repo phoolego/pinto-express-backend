@@ -9,6 +9,6 @@ module.exports = (app) => {
   app.get('/stock-detail/product',auth.adminAuthorization,AdminController.getFarmStockProduct);
   app.get('/stock-detail/send-stock-product',auth.adminAuthorization,FarmerProductController.getSendStockProduct);
 
-  app.put('/stock-product/recive',auth.adminAuthorization,AdminController.reciveSendStockProduct);
+  app.put('/stock-product/receive',auth.adminAuthorization,AdminController.receiveSendStockProduct);
   app.put('/stock-product/pay',auth.adminAuthorization,AdminController.paySendStockProduct);
 };

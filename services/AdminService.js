@@ -21,7 +21,7 @@ module.exports = {
             throw err.message;
         }
     },
-    async reciveSendStockProduct(sspId){
+    async receiveSendStockProduct(sspId){
         try{
             let sql = `SELECT ssp_status, type_of_product, ssp_amount
             FROM send_stock_product

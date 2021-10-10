@@ -56,11 +56,11 @@ module.exports = {
         res.status(500).send({ message: err });
     }
   },
-  async reciveSendStockProduct(req, res){
+  async receiveSendStockProduct(req, res){
     try{
       const param = req.body;
       if(param.sspId){
-          result = await AdminSerivce.reciveSendStockProduct(param.sspId);
+          result = await AdminSerivce.receiveSendStockProduct(param.sspId);
           res.send(result);
       }else{
           res.status(403).send({
@@ -71,11 +71,11 @@ module.exports = {
         res.status(500).send({ message: err });
     }
   },
-  async reciveSendStockProduct(req, res){
+  async receiveSendStockProduct(req, res){
     try{
       const param = req.body;
       if(param.sspId){
-          result = await AdminSerivce.reciveSendStockProduct(param.sspId);
+          result = await AdminSerivce.receiveSendStockProduct(param.sspId);
           res.send(result);
       }else{
           res.status(403).send({
