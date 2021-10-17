@@ -1,4 +1,5 @@
-const StockService = require("../services/StockService");
+const StockService = require("./StockService");
+const Utility = require("./Utility");
 module.exports = {
     async getAllFarmRequest(){
         try{
@@ -31,13 +32,10 @@ module.exports = {
             if(ssp){
                 if(ssp['ssp_status']=='PREPARE'){
                     await StockService.setPreorderToSell(ssp['type_of_product'],ssp['ssp_amount'],ssp['ssp_amount']);
-                    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-                    var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
-                    console.log(localISOTime);
                     sql = `UPDATE send_stock_product
                     SET ssp_status='DELIVERED', ssp_delivered_date=?
                     WHERE ssp_id=?;`;
-                    return await db.pintodb.query(sql,[localISOTime,sspId]);
+                    return await db.pintodb.query(sql,[Utility.getCurrentTime(),sspId]);
                 }else{
                     throw new Error('This send strock cannot deliver');
                 }

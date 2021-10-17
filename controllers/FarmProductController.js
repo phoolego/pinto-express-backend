@@ -1,4 +1,3 @@
-const { getFarmerProductDetail } = require("../services/FarmProductService");
 const FarmProductService = require("../services/FarmProductService");
 module.exports = {
     async getFarmerProduct(req, res){

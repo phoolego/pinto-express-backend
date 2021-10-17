@@ -1,4 +1,5 @@
 const StockService = require("../services/StockService");
+const Utility = require("./Utility");
 module.exports={
     async getFarmerProduct(farmerId){
         try{
@@ -95,11 +96,9 @@ module.exports={
                 sentProducts.forEach(product => totalSentProduct+=product['ssp_amount']);
                 if((product[0]['harvest_amount'] && product[0]['harvest_amount']-totalSentProduct>=sspAmount)||
                 (product[0]['predict_amount'] && product[0]['predict_amount']-totalSentProduct>=sspAmount)){
-                    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-                    var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
                     sql = `INSERT INTO send_stock_product (product_id, ssp_amount, ssp_price, ssp_status,ssp_create_date)
                     VALUE(?,?,?,?,?);`;
-                    const sspResult = await db.pintodb.query(sql,[productId,sspAmount,sspPrice,'PREPARE',localISOTime]);
+                    const sspResult = await db.pintodb.query(sql,[productId,sspAmount,sspPrice,'PREPARE',Utility.getCurrentTime()]);
                     const StockResult = await StockService.addPreorderStock(product[0]['name'],sspAmount);
                     return{sspResult,StockResult};
                 }else{
