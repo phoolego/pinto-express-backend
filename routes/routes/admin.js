@@ -1,8 +1,11 @@
 const AdminController = require('../../controllers/AdminController');
 const FarmerProductController = require('../../controllers/FarmProductController');
 const auth = require('../../middlewares/auth');
+const UploadFile = require('../../services/FileUpload');
 module.exports = (app) => {
   app.post('/login-email-admin',AdminController.loginEmailAdmin);
+
+  app.post('/product-type/insert',auth.adminAuthorization,UploadFile.uploadProductTypePic.single('productPic'),AdminController.insertProductType);
 
   app.get('/stock-list',auth.adminAuthorization,AdminController.getStockList);
   app.get('/stock-detail',auth.adminAuthorization,AdminController.getStockDetail);
