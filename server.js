@@ -1,15 +1,17 @@
-var express = require('express');
+const express = require('express');
 const http = require('http');
-var bodyParser = require('body-parser');
 const cors = require('cors');
 require('dotenv').config();
 db = require('./config/connection');
 const fs = require('fs');
 const path = require('path');
-var app = express();
+const app = express();
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// const bodyParser = require('body-parser');
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true,
+}));
 app.use(express.static(__dirname + '/public'));
 require('./routes/routes')(app);
 

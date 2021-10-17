@@ -3,6 +3,7 @@ const FarmService = require("../services/FarmService");
 module.exports = {
     async loginEmailFarmer(req, res){
       try{
+        console.log(req.body);
         param = req.body
         if(param.email && param.password){
           result = await UserService.loginEmailFarmer(param.email, param.password);
