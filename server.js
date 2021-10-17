@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: true,
 }));
+app.use(express.static('asset'));
 app.use(express.static(__dirname + '/public'));
 require('./routes/routes')(app);
 
