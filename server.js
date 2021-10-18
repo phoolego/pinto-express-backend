@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: true,
 }));
-app.use(express.static('../storage'));
+app.use(express.static(process.env.STORAGE_PATH));
 app.use(express.static(__dirname + '/public'));
 require('./routes/routes')(app);
 

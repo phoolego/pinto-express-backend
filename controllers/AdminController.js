@@ -2,6 +2,7 @@ const UserService = require("../services/UserService");
 const StockService = require("../services/StockService");
 const AdminSerivce = require("../services/AdminService");
 const ProductService = require("../services/ProductService");
+const UploadFile = require('../services/FileUpload');
 
 module.exports = {
   async loginEmailAdmin(req, res){
@@ -21,12 +22,9 @@ module.exports = {
   },
   async insertProductType(req, res){
     try{
-      productPic = req.file.path.replace(/\\\\/g,'/').replace(/\.\./g,'');
-      console.log(productPic);
       const param = req.body;
       if(param.name && param.nameEng && param.priceBuy && param.priceSell && param.unit){
-        // productPic = req.file.path.replace(/\\\\/g,'/').replace(/\.\./g,'');
-        // console.log(productPic);
+        productPic = UploadFile.getFilePath(req.file.path);
         result = await ProductService.insertProductType(param.name, param.nameEng, param.priceBuy,param.priceSell,param.unit,productPic);
         res.send(result);
       }else{
@@ -38,7 +36,24 @@ module.exports = {
     }catch(err){
         res.status(500).send({ message: err });
     }
-},
+  },
+  async updateProductType(req, res){
+    try{
+      const param = req.body;
+      if(param.name && param.nameEng && param.priceBuy && param.priceSell && param.unit){
+        productPic = UploadFile.getFilePath(req.file.path);
+        result = await ProductService.updateProductType(param.oldName,param.name, param.nameEng, param.priceBuy,param.priceSell,param.unit,productPic);
+        res.send(result);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${param.oldName?'':' oldName'}${param.name?'':' name'}${param.nameEng?'':' nameEng'}${param.priceBuy?'':' priceBuy'}`+
+          `${param.priceSell?'':' priceSell'}${param.unit?'':' unit'}`,
+        });
+      }
+    }catch(err){
+        res.status(500).send({ message: err });
+    }
+  },
   async getStockList(req, res){
     try{
       result = await StockService.getStockList();

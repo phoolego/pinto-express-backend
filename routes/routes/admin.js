@@ -6,6 +6,7 @@ module.exports = (app) => {
   app.post('/login-email-admin',AdminController.loginEmailAdmin);
 
   app.post('/product-type/insert',auth.adminAuthorization,UploadFile.uploadProductTypePic.single('productPic'),AdminController.insertProductType);
+  app.put('/product-type/update',auth.adminAuthorization,UploadFile.uploadProductTypePic.single('productPic'),AdminController.updateProductType);
 
   app.get('/stock-list',auth.adminAuthorization,AdminController.getStockList);
   app.get('/stock-detail',auth.adminAuthorization,AdminController.getStockDetail);

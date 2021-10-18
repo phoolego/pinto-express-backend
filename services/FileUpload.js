@@ -2,19 +2,19 @@ const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, '../storage/images/test/');
+    cb(null, process.env.STORAGE_PATH+'/images/test/');
   },
   filename: function(req, file, cb) {
-    cb(null,req.body.name+'.'+file.mimetype.split('/')[1]);
+    cb(null,req.body.name.replace(/ /g,'_')+'.'+file.mimetype.split('/')[1]);
   }
 })
 
-const fileFilter = (req, file, cb) => {
+const imageFilter = (req, file, cb) => {
   // reject a file
   if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
       cb(null, true);
   } else {
-      cb(null, false);
+      cb(new Error('invalid file type'), false);
   }
 }
 module.exports = {
@@ -23,12 +23,12 @@ module.exports = {
         limits: {
           fileSize: 1024 * 1024 * 5
         },
-        fileFilter: fileFilter
+        fileFilter: imageFilter
     }),
     uploadProductTypePic: multer({
       storage: multer.diskStorage({
         destination: function(req, file, cb) {
-          cb(null, '../storage/images/product_type/');
+          cb(null, process.env.STORAGE_PATH+'/images/product_type/');
         },
         filename: function(req, file, cb) {
           cb(null,req.body.nameEng.replace(/ /g,'_')+'.'+file.mimetype.split('/')[1]);
@@ -37,6 +37,9 @@ module.exports = {
       limits: {
         fileSize: 1024 * 1024 * 5
       },
-      fileFilter: fileFilter
+      fileFilter: imageFilter
   }),
+  getFilePath(filePath){
+    return filePath.replace(/\\/g,'/').replace(process.env.STORAGE_PATH,'');
+  },
 }
