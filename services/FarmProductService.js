@@ -47,6 +47,16 @@ module.exports={
             throw err.message;
         }
     },
+    async updateFarmerProductPic(productId,productPic){
+        try{
+            let sql = `UPDATE product
+            SET product_pic=?
+            WHERE product_id=?;`;
+            return await db.pintodb.query(sql,[productPic,productId]);
+        }catch(err){
+            throw err.message;
+        }
+    },
     async harvestFarmerProduct(productId,harvestDate,harvestAmount){
         try{
             let sql = `UPDATE product

@@ -18,26 +18,40 @@ const imageFilter = (req, file, cb) => {
   }
 }
 module.exports = {
-    upload: multer({
-        storage: storage,
-        limits: {
-          fileSize: 1024 * 1024 * 5
-        },
-        fileFilter: imageFilter
-    }),
-    uploadProductTypePic: multer({
-      storage: multer.diskStorage({
-        destination: function(req, file, cb) {
-          cb(null, process.env.STORAGE_PATH+'/images/product_type/');
-        },
-        filename: function(req, file, cb) {
-          cb(null,req.body.nameEng.replace(/ /g,'_')+'.'+file.mimetype.split('/')[1]);
-        }
-      }),
+  upload: multer({
+      storage: storage,
       limits: {
         fileSize: 1024 * 1024 * 5
       },
       fileFilter: imageFilter
+  }),
+  uploadProductTypePic: multer({
+    storage: multer.diskStorage({
+      destination: function(req, file, cb) {
+        cb(null, process.env.STORAGE_PATH+'/images/product_type/');
+      },
+      filename: function(req, file, cb) {
+        cb(null,req.body.nameEng.replace(/ /g,'_')+'.'+file.mimetype.split('/')[1]);
+      }
+    }),
+    limits: {
+      fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: imageFilter
+  }),
+  uploadProductPic: multer({
+    storage: multer.diskStorage({
+      destination: function(req, file, cb) {
+        cb(null, process.env.STORAGE_PATH+'/images/product/');
+      },
+      filename: function(req, file, cb) {
+        cb(null,req.body.productId+'.'+file.mimetype.split('/')[1]);
+      }
+    }),
+    limits: {
+      fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: imageFilter
   }),
   getFilePath(filePath){
     return filePath.replace(/\\/g,'/').replace(process.env.STORAGE_PATH,'');

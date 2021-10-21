@@ -1,4 +1,5 @@
 const FarmProductService = require("../services/FarmProductService");
+const UploadFile = require('../services/FileUpload');
 module.exports = {
     async getFarmerProduct(req, res){
         try{
@@ -31,12 +32,29 @@ module.exports = {
             const farmerId = req.farmerId;
             const param = req.body;
             if(farmerId && param.productType && param.area && param.plantDate && param.predictHarvestDate && param.predictAmount){
+                productPic = UploadFile.getFilePath(req.file.path);
                 result = await FarmProductService.insertFarmerProduct(farmerId, param.productType, param.area, param.plantDate,param.predictHarvestDate,param.predictAmount);
                 res.send(result);
             }else{
                 res.status(403).send({
                     message: `missing parameter${farmerId?'':' farmerId'}${param.productType?'':' productType'}${param.area?'':' area'}${param.plantDate?'':' plantDate'}`+
                     `${param.predictHarvestDate?'':' predictHarvestDate'}${param.predictAmount?'':' predictAmount'}`,
+                });
+            }
+        }catch(err){
+            res.status(500).send({ message: err });
+        }
+    },
+    async updateFarmerProductPic(req, res){
+        try{
+            const param = req.body;
+            productPic = UploadFile.getFilePath(req.file.path);
+            if(param.productId && productPic){
+                result = await FarmProductService.updateFarmerProductPic(param.productId,productPic);
+                res.send(result);
+            }else{
+                res.status(403).send({
+                    message: `missing parameter${param.productId?'':' productId'} ${param.productPic?'':' productPic'}`
                 });
             }
         }catch(err){
