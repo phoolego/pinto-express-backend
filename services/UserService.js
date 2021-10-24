@@ -10,9 +10,8 @@ module.exports = {
             return await db.pintodb.query(sql,[firstname, lastname, email, hash_pwd, address, contact, role]);
         }catch(err){
             if(err.code=='ER_DUP_ENTRY'){
-                throw `this email ${email} was used`;
+                throw `this email was used`;
             }
-            throw err.message;
         }
     },
     async loginEmail(email, password){

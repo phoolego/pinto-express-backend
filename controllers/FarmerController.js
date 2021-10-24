@@ -66,7 +66,7 @@ module.exports = {
     async requestFarmerRole(req, res){
       try{
         param = req.body
-        if(param.email && param.password){
+        if(param.email && param.password && param.farmName && param.maxArea){
           const role = await FarmService.requestFarmerRole(param.email, param.password);
           const farm = await FarmService.insertFarm(param.farmName, param.maxArea, role['user_id']);
           res.send([{
@@ -75,7 +75,7 @@ module.exports = {
           }]);
         }else{
           res.status(403).send({
-            message: `missing parameter${param.email?'':' email'}${param.password?'':' password'}`
+            message: `missing parameter${param.email?'':' email'}${param.password?'':' password'}${param.farmName?'':' farmName'}${param.maxArea?'':' maxArea'}`
           });
         }
       }catch(err){
