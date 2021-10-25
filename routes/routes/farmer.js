@@ -12,7 +12,7 @@ module.exports = (app) => {
   app.get('/farmer-product',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.getFarmerProduct);
   app.get('/farmer-product/detail',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.getFarmerProductDetail);
   app.post('/farmer-product/insert',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.insertFarmerProduct);
-  app.put('/farmer-product/update-pic',auth.farmerAuthorization,auth.farmOwner,UploadFile.uploadProductPic.single('productPic'),FarmerProductController.updateFarmerProductPic);
+  app.put('/farmer-product/update-pic',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.updateFarmerProductPic);
 
   app.put('/farmer-product/harvest',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.harvestFarmerProduct);
   app.put('/farmer-product/dispose',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.disposeFarmerProduct);
