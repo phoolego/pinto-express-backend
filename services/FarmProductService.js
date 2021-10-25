@@ -3,23 +3,24 @@ const Utility = require("./Utility");
 module.exports={
     async getFarmerProduct(farmerId){
         try{
-            let sql = `SELECT product_id, plant_date, type_of_product, status
+            let sql = `SELECT product_id, plant_date, type_of_product, CONCAT(? , picture_of_product) AS picture_of_product, status
             FROM product
             INNER JOIN type_of_product ON  product.type_of_product = type_of_product.name
             WHERE farmer_id=?
             ORDER BY product_id desc;`;
-            return await db.pintodb.query(sql,[farmerId]);
+            return await db.pintodb.query(sql,[process.env.BASE_URL,farmerId]);
         }catch(err){
             throw err.message;
         }
     },
     async getFarmerProductDetail(productId){
         try{
-            let sql = `SELECT product_id, area, plant_date, predict_harvest_date, harvest_date, harvest_amount, predict_amount, type_of_product, status, farmer_id, price_buy, unit
+            let sql = `SELECT product_id, area, plant_date, predict_harvest_date, harvest_date, harvest_amount, predict_amount, type_of_product,
+            status, farmer_id, price_buy, unit, CONCAT(? , product_pic) AS product_pic
             FROM product
             INNER JOIN type_of_product ON  product.type_of_product = type_of_product.name
             WHERE product_id=?;`;
-            return (await db.pintodb.query(sql,[productId]))[0];
+            return (await db.pintodb.query(sql,[process.env.BASE_URL,productId]))[0];
         }catch(err){
             throw err.message;
         }
