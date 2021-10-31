@@ -53,14 +53,22 @@ module.exports = {
             throw err.message;
         }
     },
-    async updateFarm(farmName,maxArea,farmerId){
+    async updateFarm(farmName,maxArea,userId){
         try{
             let sql = `UPDATE farmer 
             SET farm_name=?, max_area=?
-            WHERE farmer_id=?;`;
-            return await db.pintodb.query(sql,[farmName, maxArea, farmerId]);
+            WHERE user_id=?;`;
+            return await db.pintodb.query(sql,[farmName, maxArea, userId]);
         }catch(err){
             throw err.message;
         }
     },
+    async getFarmerDetail(userId){
+        let sql = `SELECT user.user_id, firstname, lastname, email, address, contact, role, farmer_id, farm_name, max_area
+        FROM user
+        LEFT JOIN farmer ON user.user_id = farmer.user_id
+        WHERE user.user_id = ?`;
+        const user = (await db.pintodb.query(sql,[userId]))[0];
+        return user;
+    }
 }
