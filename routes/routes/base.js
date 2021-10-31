@@ -16,4 +16,16 @@ module.exports = (app) => {
     console.log(req.file);
     res.send('file is store');
   });
+  app.post('/upload-product-type-file', UploadFile.uploadProductTypePic.single('image'),async (req,res) =>{
+    console.log(req.file);
+    try{
+      let sql =`UPDATE type_of_product
+      SET name=?, name_eng=?, picture_of_product=?
+      WHERE name = ?;`;
+      res.send( await db.pintodb.query(sql,[req.body.name, req.body.nameEng, req.body.productPic, req.body.name]));
+      // return await db.pintodb.query(sql,[name, nameEng, priceBuy, priceSell, unit, productPic,oldName]);
+    }catch(err){
+        throw err.message;
+    }
+  });
 };
