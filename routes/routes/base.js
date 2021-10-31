@@ -22,7 +22,7 @@ module.exports = (app) => {
       let sql =`UPDATE type_of_product
       SET name=?, name_eng=?, picture_of_product=?
       WHERE name = ?;`;
-      res.send( await db.pintodb.query(sql,[req.body.name, req.body.nameEng, req.body.productPic, req.body.name]));
+      res.send( await db.pintodb.query(sql,[req.body.name, req.body.nameEng, UploadFile.getFilePath(req.file.path), req.body.name]));
     }catch(err){
         throw err.message;
     }
