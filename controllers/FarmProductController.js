@@ -11,7 +11,11 @@ module.exports = {
                 res.status(403).send({message: 'missing parameter farmerId'});
             }
         }catch(err){
-            res.status(500).send({ message: err });
+            if(err.message){
+                res.status(500).send({ message: err.message });
+            }else{
+                res.status(500).send({ message: err });
+            }
         }
     },
     async getFarmerProductDetail(req, res){
@@ -24,7 +28,11 @@ module.exports = {
                 res.status(403).send({message: 'missing parameter productId'});
             }
         }catch(err){
-            res.status(500).send({ message: err });
+            if(err.message){
+                res.status(500).send({ message: err.message });
+            }else{
+                res.status(500).send({ message: err });
+            }
         }
     },
     async insertFarmerProduct(req, res){
@@ -32,7 +40,7 @@ module.exports = {
             const farmerId = req.farmerId;
             const param = req.body;
             if(farmerId && param.productType && param.area && param.plantDate && param.predictHarvestDate && param.predictAmount){
-                productPic = UploadFile.getFilePath(req.file.path);
+                productPic = req.file.path ? UploadFile.getFilePath(req.file.path) : null;
                 result = await FarmProductService.insertFarmerProduct(farmerId, param.productType, param.area, param.plantDate,param.predictHarvestDate,param.predictAmount);
                 res.send(result);
             }else{
@@ -42,13 +50,17 @@ module.exports = {
                 });
             }
         }catch(err){
-            res.status(500).send({ message: err });
+            if(err.message){
+                res.status(500).send({ message: err.message });
+            }else{
+                res.status(500).send({ message: err });
+            }
         }
     },
     async updateFarmerProductPic(req, res){
         try{
             const param = req.body;
-            productPic = UploadFile.getFilePath(req.file.path);
+            productPic = req.file.path ? UploadFile.getFilePath(req.file.path) : null;
             if(param.productId && productPic){
                 result = await FarmProductService.updateFarmerProductPic(param.productId,productPic);
                 res.send(result);
@@ -58,7 +70,11 @@ module.exports = {
                 });
             }
         }catch(err){
-            res.status(500).send({ message: err });
+            if(err.message){
+                res.status(500).send({ message: err.message });
+            }else{
+                res.status(500).send({ message: err });
+            }
         }
     },
     async harvestFarmerProduct(req, res){
@@ -73,7 +89,11 @@ module.exports = {
                 });
             }
         }catch(err){
-            res.status(500).send({ message: err });
+            if(err.message){
+                res.status(500).send({ message: err.message });
+            }else{
+                res.status(500).send({ message: err });
+            }
         }
     },
     async disposeFarmerProduct(req, res){
@@ -88,7 +108,11 @@ module.exports = {
                 });
             }
         }catch(err){
-            res.status(500).send({ message: err });
+            if(err.message){
+                res.status(500).send({ message: err.message });
+            }else{
+                res.status(500).send({ message: err });
+            }
         }
     },
     async getSendStockProduct(req, res){
@@ -103,7 +127,11 @@ module.exports = {
                 });
             }
         }catch(err){
-            res.status(500).send({ message: err });
+            if(err.message){
+                res.status(500).send({ message: err.message });
+            }else{
+                res.status(500).send({ message: err });
+            }
         }
     },
     async insertSendStockProduct(req, res){
@@ -118,7 +146,11 @@ module.exports = {
                 });
             }
         }catch(err){
-            res.status(500).send({ message: err });
+            if(err.message){
+                res.status(500).send({ message: err.message });
+            }else{
+                res.status(500).send({ message: err });
+            }
         }
     },
     async cancelSendStockProduct(req, res){
@@ -133,7 +165,11 @@ module.exports = {
                 });
             }
         }catch(err){
-            res.status(500).send({ message: err });
+            if(err.message){
+                res.status(500).send({ message: err.message });
+            }else{
+                res.status(500).send({ message: err });
+            }
         }
     }
 }

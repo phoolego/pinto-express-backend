@@ -21,7 +21,11 @@ module.exports = {
         });
       }
     }catch(err){
-      res.status(500).send({ message: err });
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
     }
   },
   async updateUser(req, res){
@@ -36,7 +40,11 @@ module.exports = {
         });
       }
     }catch(err){
-      res.status(500).send({ message: err });
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
     }
   },
   async loginEmail(req, res){
@@ -51,7 +59,11 @@ module.exports = {
         });
       }
     }catch(err){
-      res.status(500).send({ message: err });
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
     }
   },
   //Product
@@ -60,7 +72,11 @@ module.exports = {
       result = await ProductService.getProductType();
       res.send(result);
     }catch(err){
-      res.status(500).send({ message: err });
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
     }
   },
 };

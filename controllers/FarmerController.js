@@ -13,7 +13,11 @@ module.exports = {
           });
         }
       }catch(err){
-        res.status(500).send({ message: err });
+        if(err.message){
+          res.status(500).send({ message: err.message });
+        }else{
+          res.status(500).send({ message: err });
+        }
       }
     },
     async insertFarmer(req, res){
@@ -28,7 +32,11 @@ module.exports = {
           });
         }
       }catch(err){
-        res.status(500).send({ message: err });
+        if(err.message){
+          res.status(500).send({ message: err.message });
+        }else{
+          res.status(500).send({ message: err });
+        }
       }
     },
     async updateFarmer(req, res){
@@ -46,7 +54,11 @@ module.exports = {
           });
         }
       }catch(err){
-        res.status(500).send({ message: err });
+        if(err.message){
+          res.status(500).send({ message: err.message });
+        }else{
+          res.status(500).send({ message: err });
+        }
       }
     },
     async registerFarmer(req, res){
@@ -63,7 +75,11 @@ module.exports = {
           });
         }
       }catch(err){
-        res.status(500).send({ message: err });
+        if(err.message){
+          res.status(500).send({ message: err.message });
+        }else{
+          res.status(500).send({ message: err });
+        }
       }
     },
     async requestFarmerRole(req, res){
@@ -82,7 +98,11 @@ module.exports = {
           });
         }
       }catch(err){
-        res.status(500).send({ message: err });
+        if(err.message){
+          res.status(500).send({ message: err.message });
+        }else{
+          res.status(500).send({ message: err });
+        }
       }
     }
   };
