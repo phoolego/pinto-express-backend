@@ -14,6 +14,12 @@ module.exports = {
             }
         }
     },
+    async updateUser(firstname, lastname, address, contact, userId){
+        let sql = `UPDATE user 
+        SET firstname = ?, lastname = ?, address = ?, contact = ?
+        WHERE user_id = ?;`;
+        return await db.pintodb.query(sql,[firstname, lastname, address, contact, userId]);
+    },
     async loginEmail(email, password){
         try{
             let passSql = `SELECT password

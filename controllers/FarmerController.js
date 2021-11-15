@@ -34,12 +34,15 @@ module.exports = {
     async updateFarmer(req, res){
       try{
         param = req.body
-        if(param.farmName && param.maxArea && param.farmerId){
-          result = await FarmService.updateFarm(param.farmName, param.maxArea,param.farmerId);
+        if(param.farmName && param.maxArea && param.firstname && param.lastname && param.address && param.contact && param.userId){
+          await UserService.updateUser(param.firstname,param.lastname,param.address,param.contact,param.userId);
+          await FarmService.updateFarm(param.farmName, param.maxArea,param.userId);
+          result = await FarmService.getFarmerDetail(param.userId);
           res.send(result);
         }else{
           res.status(403).send({
-            message: `missing parameter${param.farmName?'':' farmName'}${param.maxArea?'':' maxArea'}${param.farmerId?'':' farmerId'}`
+            message: `missing parameter${param.farmName?'':' farmName'}${param.maxArea?'':' maxArea'}${param.firstname?'':' firstname'}`+
+            `${param.lastname?'':' lastname'}${param.address?'':' address'}${param.contact?'':' contact'}${param.userId?'':' userId'}`
           });
         }
       }catch(err){
