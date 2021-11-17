@@ -15,7 +15,7 @@ module.exports = {
             return await db.pintodb.query(sql,[name, nameEng, priceBuy, priceSell, unit]);
         }catch(err){
             if(err.code=='ER_DUP_ENTRY'){
-                throw `duplicte named`;
+                throw `duplicate named`;
             }
             throw err.message;
         }
