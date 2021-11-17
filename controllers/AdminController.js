@@ -17,15 +17,18 @@ module.exports = {
         });
       }
     }catch(err){
-      res.status(500).send({ message: err });
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
     }
   },
   async insertProductType(req, res){
     try{
       const param = req.body;
       if(param.name && param.nameEng && param.priceBuy && param.priceSell && param.unit){
-        productPic = UploadFile.getFilePath(req.file.path);
-        result = await ProductService.insertProductType(param.name, param.nameEng, param.priceBuy,param.priceSell,param.unit,productPic);
+        result = await ProductService.insertProductType(param.name, param.nameEng, param.priceBuy,param.priceSell,param.unit);
         res.send(result);
       }else{
         res.status(403).send({
@@ -34,14 +37,18 @@ module.exports = {
         });
       }
     }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
         res.status(500).send({ message: err });
+      }
     }
   },
   async updateProductType(req, res){
     try{
       const param = req.body;
-      if(param.name && param.nameEng && param.priceBuy && param.priceSell && param.unit){
-        productPic = UploadFile.getFilePath(req.file.path);
+      if(param.oldName && param.name && param.nameEng && param.priceBuy && param.priceSell && param.unit){
+        productPic = req.file ? UploadFile.getFilePath(req.file.path) : null;
         result = await ProductService.updateProductType(param.oldName,param.name, param.nameEng, param.priceBuy,param.priceSell,param.unit,productPic);
         res.send(result);
       }else{
@@ -51,7 +58,31 @@ module.exports = {
         });
       }
     }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
         res.status(500).send({ message: err });
+      }
+    }
+  },
+  async updateProductTypePic(req, res){
+    try{
+      const param = req.body;
+      productPic = req.file ? UploadFile.getFilePath(req.file.path) : null;
+      if(param.name && productPic){
+        result = await ProductService.updateProductTypePic(param.name, productPic);
+        res.send(result);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${param.name?'':' oldName'}${productPic?'':' productPic'}`,
+        });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
     }
   },
   async getStockList(req, res){
@@ -74,7 +105,11 @@ module.exports = {
             });
         }
     }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
         res.status(500).send({ message: err });
+      }
     }
   },
   async getFarmStockProduct(req, res){
@@ -89,7 +124,11 @@ module.exports = {
             });
         }
     }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
         res.status(500).send({ message: err });
+      }
     }
   },
   async receiveSendStockProduct(req, res){
@@ -104,7 +143,11 @@ module.exports = {
           });
       }
     }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
         res.status(500).send({ message: err });
+      }
     }
   },
   async receiveSendStockProduct(req, res){
@@ -119,7 +162,11 @@ module.exports = {
           });
       }
     }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
         res.status(500).send({ message: err });
+      }
     }
   },
   async paySendStockProduct(req, res){
@@ -134,7 +181,11 @@ module.exports = {
           });
       }
     }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
         res.status(500).send({ message: err });
+      }
     }
   },
 };

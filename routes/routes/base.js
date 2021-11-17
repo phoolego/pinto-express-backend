@@ -9,6 +9,7 @@ module.exports = (app) => {
   //User
   app.post('/insert-user',BaseController.insertUser);
   app.post('/login-email',BaseController.loginEmail);
+  app.put('/update-user',BaseController.updateUser);
   //Product
   app.get('/product-type',auth.authorization, BaseController.getProductType);
   //file upload

@@ -21,7 +21,30 @@ module.exports = {
         });
       }
     }catch(err){
-      res.status(500).send({ message: err });
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async updateUser(req, res){
+    try{
+      param = req.body
+      if(param.firstname && param.lastname && param.address && param.contact && param.userId){
+        result = await UserService.updateUser(param.firstname, param.lastname, param.address, param.contact, param.userId);
+        res.send(result);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${param.firstname?'':' firstname'}${param.lastname?'':' lastname'}${param.address?'':' address'}${param.contact?'':' contact'}${param.userId?'':' userId'}`
+        });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
     }
   },
   async loginEmail(req, res){
@@ -36,7 +59,11 @@ module.exports = {
         });
       }
     }catch(err){
-      res.status(500).send({ message: err });
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
     }
   },
   //Product
@@ -45,7 +72,11 @@ module.exports = {
       result = await ProductService.getProductType();
       res.send(result);
     }catch(err){
-      res.status(500).send({ message: err });
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
     }
   },
 };

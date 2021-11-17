@@ -12,9 +12,9 @@ const storage = multer.diskStorage({
 const imageFilter = (req, file, cb) => {
   // reject a file
   if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
-      cb(null, true);
+    cb(null, true);
   } else {
-      cb(new Error('invalid file type'), false);
+    cb(new Error('invalid file type'), false);
   }
 }
 module.exports = {
