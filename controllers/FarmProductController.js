@@ -40,7 +40,6 @@ module.exports = {
             const farmerId = req.farmerId;
             const param = req.body;
             if(farmerId && param.productType && param.area && param.plantDate && param.predictHarvestDate && param.predictAmount){
-                productPic = req.file.path ? UploadFile.getFilePath(req.file.path) : null;
                 result = await FarmProductService.insertFarmerProduct(farmerId, param.productType, param.area, param.plantDate,param.predictHarvestDate,param.predictAmount);
                 res.send(result);
             }else{
