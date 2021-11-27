@@ -14,6 +14,18 @@ module.exports = {
             }
         }
     },
+    async getUser(userId){
+        try{
+            let sql = `SELECT firstname, lastname, email, password, address, contact, role
+            FROM user
+            WHERE user_id = ?;`;
+            return await db.pintodb.query(sql,[userId]);
+        }catch(err){
+            if(err.code=='ER_DUP_ENTRY'){
+                throw `this email was used`;
+            }
+        }
+    },
     async updateUser(firstname, lastname, address, contact, userId){
         let sql = `UPDATE user 
         SET firstname = ?, lastname = ?, address = ?, contact = ?
