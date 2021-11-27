@@ -10,9 +10,12 @@ module.exports = {
     },
     async insertProductType(name, nameEng, priceBuy, priceSell, unit){
         try{
-            sql = `INSERT INTO type_of_product (name, name_eng, price_buy, price_sell, unit)
+            let sql = `INSERT INTO type_of_product (name, name_eng, price_buy, price_sell, unit)
             VALUE(?,?,?,?,?);`;
-            return await db.pintodb.query(sql,[name, nameEng, priceBuy, priceSell, unit]);
+            await db.pintodb.query(sql,[name, nameEng, priceBuy, priceSell, unit]);
+            sql = `INSERT INTO stock (product_type)
+            VALUE(?);`;
+            return await db.pintodb.query(sql,[name]);
         }catch(err){
             if(err.code=='ER_DUP_ENTRY'){
                 throw `duplicate named`;
