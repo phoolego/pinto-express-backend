@@ -188,6 +188,25 @@ module.exports = {
       }
     }
   },
+  async disposedStock(req, res){
+    try{
+      const param = req.body;
+      if(param.productType && param.disposedAmount && param.disposedReason){
+          result = await StockService.disposeStock(param.productType,param.disposedAmount,param.disposedReason);
+          res.send(result);
+      }else{
+          res.status(403).send({
+              message: `missing parameter${param.productType?'':' productType'}${param.disposedAmount?'':' disposedAmount'}${param.disposedReason?'':' disposedReason'}`,
+          });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
   async getAllFarmer(req, res){
     try{
       result = await AdminSerivce.getAllFarmer();

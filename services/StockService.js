@@ -37,17 +37,20 @@ module.exports={
             throw err.message
         }
     },
-    async disposeStock(productType,disposedAmount){
+    async disposeStock(productType,disposedAmount,disposeReason){
         try{
-            let sql = `SELECT selling_amount
+            let sql = `SELECT stock_id, selling_amount
             FROM stock
             WHERE product_type=?`;
-            const currentSelling = (await db.pintodb.query(sql,[productType]))[0]['selling_amount'];
-            if(currentSelling && currentSelling-disposedAmount>=0){
+            const currentStock = (await db.pintodb.query(sql,[productType]))[0];
+            if(currentStock['selling_amount'] && currentStock['selling_amount']-disposedAmount>=0){
                 let sql = `UPDATE stock
                 SET selling_amount=selling_amount-?
                 WHERE product_type=?;`;
-                return await db.pintodb.query(sql,[disposedAmount,productType]);
+                await db.pintodb.query(sql,[disposedAmount,productType]);
+                sql = `INSERT INTO stock_dispose_record (stock_id, sdr_amount, sdr_reason)
+                VALUE(?,?,?);`;
+                return await db.pintodb.query(sql,[currentStock['stock_id'],disposedAmount,disposeReason]);
             }else{
                 throw new Error('This strock cannot be disposed');
             }
