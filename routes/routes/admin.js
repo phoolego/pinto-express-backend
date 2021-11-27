@@ -1,7 +1,6 @@
 const AdminController = require('../../controllers/AdminController');
 const FarmerProductController = require('../../controllers/FarmProductController');
 const auth = require('../../middlewares/auth');
-const multer = require('multer');
 const UploadFile = require('../../services/FileUpload');
 const uploadProductTypePic = UploadFile.uploadProductTypePic.single('productPic')
 module.exports = (app) => {
