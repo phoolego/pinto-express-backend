@@ -188,5 +188,48 @@ module.exports = {
       }
     }
   },
+  async getAllFarmer(req, res){
+    try{
+      result = await AdminSerivce.getAllFarmer();
+      res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async getAllFarmRequest(req, res){
+    try{
+      result = await AdminSerivce.getAllFarmRequest();
+      res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async approveFarmRequest(req, res){
+    try{
+      const param = req.body;
+      if(param.userId){
+        result = await AdminSerivce.approveFarmRequest(param.userId);
+        res.send(result);
+      }else{
+        res.status(403).send({
+            message: `missing parameter${param.userId?'':' userId'}`,
+        });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
 };
   

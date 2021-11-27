@@ -24,4 +24,8 @@ module.exports = (app) => {
 
   app.put('/stock-product/receive',auth.adminAuthorization,AdminController.receiveSendStockProduct);
   app.put('/stock-product/pay',auth.adminAuthorization,AdminController.paySendStockProduct);
+
+  app.get('/all-farmer',auth.adminAuthorization,AdminController.getAllFarmer);
+  app.get('/all-farmer-request',auth.adminAuthorization,AdminController.getAllFarmRequest);
+  app.put('/approve-farmer',auth.adminAuthorization,AdminController.approveFarmRequest);
 };

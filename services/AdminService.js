@@ -7,7 +7,7 @@ module.exports = {
             FROM user
             LEFT JOIN farmer ON user.user_id = farmer.user_id
             WHERE role = 'REQ-FARMER'`;
-            return await db.pintodb.query(sql,[email]);
+            return await db.pintodb.query(sql);
         }catch(err){
             throw err.message;
         }
@@ -18,17 +18,33 @@ module.exports = {
             FROM user
             LEFT JOIN farmer ON user.user_id = farmer.user_id
             WHERE role = 'FARMER'`;
-            return await db.pintodb.query(sql,[email]);
+            return await db.pintodb.query(sql);
         }catch(err){
             throw err.message;
         }
     },
     async approveFarmRequest(userId){
         try{
-            let sql =`UPDATE user
-            SET role = 'FARMER' 
-            WHERE role = 'REQ-FARMER' AND user_id=?`;
-            return await db.pintodb.query(sql,[userId]);
+            let sql = `SELECT user_id, role
+            FROM user
+            WHERE user_id = ?`;
+            const user = (await db.pintodb.query(sql,[userId]))[0];
+            if(user['role']==='FARMER' || user['role']==='ADMIN'){
+                throw new Error('you already have farmer permission');
+            }else if(user['role']==='CUSTOMER'){
+                throw new Error('cannot gain permission');
+            }else{
+                sql = `UPDATE user 
+                SET role = 'FARMER' 
+                WHERE role = 'REQ-FARMER' AND user_id=?`;
+                await db.pintodb.query(sql,[userId]);
+                return (await db.pintodb.query(
+                    `SELECT user_id, role
+                    FROM user
+                    WHERE user_id = ?`,
+                    [userId]
+                ))[0];
+            }
         }catch(err){
             throw err.message;
         }
