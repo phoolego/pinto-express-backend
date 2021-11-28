@@ -32,7 +32,8 @@ module.exports = {
     try{
       param = req.body
       if(param.firstname && param.lastname && param.address && param.contact && param.userId){
-        result = await UserService.updateUser(param.firstname, param.lastname, param.address, param.contact, param.userId);
+        await UserService.updateUser(param.firstname, param.lastname, param.address, param.contact, param.userId);
+        const result = await UserService.getUser(param.userId);
         res.send(result);
       }else{
         res.status(403).send({

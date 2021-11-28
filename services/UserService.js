@@ -16,10 +16,10 @@ module.exports = {
     },
     async getUser(userId){
         try{
-            let sql = `SELECT firstname, lastname, email, password, address, contact, role
+            let sql = `SELECT user_id, firstname, lastname, email, address, contact, role
             FROM user
             WHERE user_id = ?;`;
-            return await db.pintodb.query(sql,[userId]);
+            return (await db.pintodb.query(sql,[userId]))[0];
         }catch(err){
             if(err.code=='ER_DUP_ENTRY'){
                 throw `this email was used`;
