@@ -1,8 +1,15 @@
 const multer = require('multer');
+const fs = require('fs');
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, process.env.STORAGE_PATH+'/images/test/');
+    const dir = process.env.STORAGE_PATH+'/images/test/';
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, {
+        recursive: true
+      });
+    }
+    cb(null, dir);
   },
   filename: function(req, file, cb) {
     cb(null,req.body.name.replace(/ /g,'_')+'.'+file.mimetype.split('/')[1]);
@@ -28,7 +35,13 @@ module.exports = {
   uploadProductTypePic: multer({
     storage: multer.diskStorage({
       destination: function(req, file, cb) {
-        cb(null, process.env.STORAGE_PATH+'/images/product_type/');
+        const dir = process.env.STORAGE_PATH+'/images/product_type/';
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, {
+            recursive: true
+          });
+        }
+        cb(null, dir);
       },
       filename: function(req, file, cb) {
         cb(null,req.body.nameEng.replace(/ /g,'_')+'.'+file.mimetype.split('/')[1]);
@@ -42,7 +55,13 @@ module.exports = {
   uploadProductPic: multer({
     storage: multer.diskStorage({
       destination: function(req, file, cb) {
-        cb(null, process.env.STORAGE_PATH+'/images/product/');
+        const dir = process.env.STORAGE_PATH+'/images/product/';
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, {
+            recursive: true
+          });
+        }
+        cb(null, dir);
       },
       filename: function(req, file, cb) {
         cb(null,req.body.productId+'.'+file.mimetype.split('/')[1]);

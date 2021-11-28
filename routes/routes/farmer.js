@@ -14,7 +14,7 @@ module.exports = (app) => {
   app.get('/farmer-product/detail',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.getFarmerProductDetail);
   app.post('/farmer-product/insert',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.insertFarmerProduct);
   app.put('/farmer-product/update-pic',auth.farmerAuthorization,auth.farmOwner,function (req, res, next) {
-    uploadProductTypePic(req, res, function (err) {
+    uploadProductPic(req, res, function (err) {
       if(err){
         res.status(500).send({ message: err.message });
       }
