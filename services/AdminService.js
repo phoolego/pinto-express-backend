@@ -7,17 +7,44 @@ module.exports = {
             FROM user
             LEFT JOIN farmer ON user.user_id = farmer.user_id
             WHERE role = 'REQ-FARMER'`;
-            return await db.pintodb.query(sql,[email]);
+            return await db.pintodb.query(sql);
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async getAllFarmer(){
+        try{
+            let sql =`SELECT user.user_id, firstname, lastname, email, address, contact, farm_name, max_area
+            FROM user
+            LEFT JOIN farmer ON user.user_id = farmer.user_id
+            WHERE role = 'FARMER'`;
+            return await db.pintodb.query(sql);
         }catch(err){
             throw err.message;
         }
     },
     async approveFarmRequest(userId){
         try{
-            let sql =`UPDATE user
-            SET role = 'FARMER' 
-            WHERE role = 'REQ-FARMER' AND user_id=?`;
-            return await db.pintodb.query(sql,[userId]);
+            let sql = `SELECT user_id, role
+            FROM user
+            WHERE user_id = ?`;
+            const user = (await db.pintodb.query(sql,[userId]))[0];
+            if(user['role']==='FARMER' || user['role']==='ADMIN'){
+                throw new Error('you already have farmer permission');
+            }else if(user['role']==='CUSTOMER'){
+                throw new Error('cannot gain permission');
+            }else{
+                sql = `UPDATE user 
+                SET role = 'FARMER' 
+                WHERE role = 'REQ-FARMER' AND user_id=?`;
+                await db.pintodb.query(sql,[userId]);
+                return (await db.pintodb.query(
+                    `SELECT user_id, role
+                    FROM user
+                    WHERE user_id = ?`,
+                    [userId]
+                ))[0];
+            }
         }catch(err){
             throw err.message;
         }
@@ -46,7 +73,7 @@ module.exports = {
             throw err.message;
         }
     },
-    async paySendStockProduct(sspId){
+    async paySendStockProduct(sspId,farmerTransaction){
         try{
             let sql = `SELECT ssp_status
             FROM send_stock_product
@@ -55,9 +82,9 @@ module.exports = {
             if(ssp){
                 if(ssp['ssp_status']=='DELIVERED'){
                     sql = `UPDATE send_stock_product
-                    SET ssp_status='PAID'
+                    SET ssp_status='PAID', ssp_tran_pic=?
                     WHERE ssp_id=?;`;
-                    return await db.pintodb.query(sql,[sspId]);
+                    return await db.pintodb.query(sql,[farmerTransaction,sspId]);
                 }else{
                     throw new Error('This send strock cannot pay');
                 }

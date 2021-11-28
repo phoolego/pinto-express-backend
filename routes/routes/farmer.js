@@ -2,6 +2,7 @@ const FarmerController = require('../../controllers/FarmerController');
 const FarmerProductController = require('../../controllers/FarmProductController');
 const UploadFile = require('../../services/FileUpload');
 const auth = require('../../middlewares/auth');
+const uploadProductPic = UploadFile.uploadProductPic.single('productPic')
 module.exports = (app) => {
   app.post('/login-email-farmer',FarmerController.loginEmailFarmer);
   app.post('/insert-farmer',auth.farmerAuthorization,FarmerController.insertFarmer);
@@ -12,7 +13,15 @@ module.exports = (app) => {
   app.get('/farmer-product',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.getFarmerProduct);
   app.get('/farmer-product/detail',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.getFarmerProductDetail);
   app.post('/farmer-product/insert',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.insertFarmerProduct);
-  app.put('/farmer-product/update-pic',auth.farmerAuthorization,auth.farmOwner,UploadFile.uploadProductPic.single('productPic'),FarmerProductController.updateFarmerProductPic);
+  app.put('/farmer-product/update-pic',auth.farmerAuthorization,auth.farmOwner,function (req, res, next) {
+    uploadProductPic(req, res, function (err) {
+      if(err){
+        res.status(500).send({ message: err.message });
+      }
+      next();
+    })
+  }
+  ,FarmerProductController.updateFarmerProductPic);
 
   app.put('/farmer-product/harvest',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.harvestFarmerProduct);
   app.put('/farmer-product/dispose',auth.farmerAuthorization,auth.farmOwner,FarmerProductController.disposeFarmerProduct);

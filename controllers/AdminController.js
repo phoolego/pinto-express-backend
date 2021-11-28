@@ -172,13 +172,76 @@ module.exports = {
   async paySendStockProduct(req, res){
     try{
       const param = req.body;
-      if(param.sspId){
-          result = await AdminSerivce.paySendStockProduct(param.sspId);
+      const farmerTransaction = req.file ? UploadFile.getFilePath(req.file.path) : null;
+      if(param.sspId,farmerTransaction){
+          result = await AdminSerivce.paySendStockProduct(param.sspId,farmerTransaction);
           res.send(result);
       }else{
           res.status(403).send({
-              message: `missing parameter${param.sspId?'':' sspId'}`,
+              message: `missing parameter${param.sspId?'':' sspId'}${farmerTransaction?'':' farmerTransaction'}`,
           });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async disposedStock(req, res){
+    try{
+      const param = req.body;
+      if(param.productType && param.disposedAmount && param.disposedReason){
+          result = await StockService.disposeStock(param.productType,param.disposedAmount,param.disposedReason);
+          res.send(result);
+      }else{
+          res.status(403).send({
+              message: `missing parameter${param.productType?'':' productType'}${param.disposedAmount?'':' disposedAmount'}${param.disposedReason?'':' disposedReason'}`,
+          });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async getAllFarmer(req, res){
+    try{
+      result = await AdminSerivce.getAllFarmer();
+      res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async getAllFarmRequest(req, res){
+    try{
+      result = await AdminSerivce.getAllFarmRequest();
+      res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async approveFarmRequest(req, res){
+    try{
+      const param = req.body;
+      if(param.userId){
+        result = await AdminSerivce.approveFarmRequest(param.userId);
+        res.send(result);
+      }else{
+        res.status(403).send({
+            message: `missing parameter${param.userId?'':' userId'}`,
+        });
       }
     }catch(err){
       if(err.message){
