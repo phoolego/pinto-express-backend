@@ -72,6 +72,26 @@ module.exports = {
     },
     fileFilter: imageFilter
   }),
+  uploadFarmerTransaction: multer({
+    storage: multer.diskStorage({
+      destination: function(req, file, cb) {
+        const dir = process.env.STORAGE_PATH+'/images/farmerTransaction/';
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, {
+            recursive: true
+          });
+        }
+        cb(null, dir);
+      },
+      filename: function(req, file, cb) {
+        cb(null,'ft'+req.body.sspId+'.'+file.mimetype.split('/')[1]);
+      }
+    }),
+    limits: {
+      fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: imageFilter
+  }),
   getFilePath(filePath){
     return filePath.replace(/\\/g,'/').replace(process.env.STORAGE_PATH,'');
   },

@@ -73,7 +73,7 @@ module.exports = {
             throw err.message;
         }
     },
-    async paySendStockProduct(sspId){
+    async paySendStockProduct(sspId,farmerTransaction){
         try{
             let sql = `SELECT ssp_status
             FROM send_stock_product
@@ -82,9 +82,9 @@ module.exports = {
             if(ssp){
                 if(ssp['ssp_status']=='DELIVERED'){
                     sql = `UPDATE send_stock_product
-                    SET ssp_status='PAID'
+                    SET ssp_status='PAID', ssp_tran_pic=?
                     WHERE ssp_id=?;`;
-                    return await db.pintodb.query(sql,[sspId]);
+                    return await db.pintodb.query(sql,[farmerTransaction,sspId]);
                 }else{
                     throw new Error('This send strock cannot pay');
                 }

@@ -172,12 +172,13 @@ module.exports = {
   async paySendStockProduct(req, res){
     try{
       const param = req.body;
-      if(param.sspId){
-          result = await AdminSerivce.paySendStockProduct(param.sspId);
+      const farmerTransaction = req.file ? UploadFile.getFilePath(req.file.path) : null;
+      if(param.sspId,farmerTransaction){
+          result = await AdminSerivce.paySendStockProduct(param.sspId,farmerTransaction);
           res.send(result);
       }else{
           res.status(403).send({
-              message: `missing parameter${param.sspId?'':' sspId'}`,
+              message: `missing parameter${param.sspId?'':' sspId'}${farmerTransaction?'':' farmerTransaction'}`,
           });
       }
     }catch(err){
