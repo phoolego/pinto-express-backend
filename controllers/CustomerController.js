@@ -13,7 +13,7 @@ module.exports = {
         res.send(result);
       }else{
         res.status(403).send({
-          message: `missing parameter${param.firstname?'':' firstname'}${param.lastname?'':' lastname'}${param.email?'':' email'}${param.password?'':' password'}${param.address?'':' address'}${param.contact?'':' contact'}${param.role?'':' role'}`
+          message: `missing parameter${param.firstname?'':' firstname'}${param.lastname?'':' lastname'}${param.email?'':' email'}${param.password?'':' password'}${param.address?'':' address'}${param.contact?'':' contact'}`
         });
       }
     }catch(err){
