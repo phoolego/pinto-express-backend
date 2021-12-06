@@ -26,8 +26,48 @@ module.exports = {
   },
   async getSellProduct(req, res){
     try{
-      result = await ProductService.getSellProduct();
+      sellProduct = await ProductService.getSellProduct();
+      preOrderProduct = await ProductService.getPreOrderProduct()
+      result = sellProduct.concat(preOrderProduct);
       res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async getSellProductDetail(req, res){
+    try{
+      if(req.query.productType)
+      {
+        result = await ProductService.getSellProductDetail(req.query.productType);
+        res.send(result);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${req.query.productType?'':' productType'}`
+        });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async getPreOrderProductDetail(req, res){
+    try{
+      if(req.query.productType)
+      {
+        result = await ProductService.getPreOrderProductDetail(req.query.productType);
+        res.send(result);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${req.query.productType?'':' productType'}`
+        });
+      }
     }catch(err){
       if(err.message){
         res.status(500).send({ message: err.message });
