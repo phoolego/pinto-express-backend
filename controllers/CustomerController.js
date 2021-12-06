@@ -26,8 +26,9 @@ module.exports = {
   },
   async getSellProduct(req, res){
     try{
-      result = await ProductService.getSellProduct();
-      result = result.concat(await ProductService.getpreOrderProduct());
+      sellProduct = await ProductService.getSellProduct();
+      preOrderProduct = await ProductService.getPreOrderProduct()
+      result = sellProduct.concat(preOrderProduct);
       res.send(result);
     }catch(err){
       if(err.message){
@@ -60,7 +61,7 @@ module.exports = {
     try{
       if(req.query.productType)
       {
-        result = await ProductService.getpreOrderProductDetail(req.query.productType);
+        result = await ProductService.getPreOrderProductDetail(req.query.productType);
         res.send(result);
       }else{
         res.status(403).send({

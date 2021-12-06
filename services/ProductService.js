@@ -58,7 +58,7 @@ module.exports = {
     },
     async getSellProductDetail(productType){
         try{
-            let sql = `SELECT name, name_eng, price_sell, unit, selling_amount, CONCAT(? , picture_of_product) AS picture_of_product
+            let sql = `SELECT name, name_eng, price_sell, unit, selling_amount, CONCAT(? , picture_of_product) AS picture_of_product, 'SELLING' as sell_type
             FROM type_of_product
             JOIN stock ON stock.product_type = type_of_product.name
             where stock.product_type = ?
@@ -77,7 +77,7 @@ module.exports = {
             throw err.message;
         }
     },
-    async getpreOrderProduct(){
+    async getPreOrderProduct(){
         try{
             let sql = `SELECT name, name_eng, price_sell, unit, CONCAT(? , picture_of_product) AS picture_of_product, recent_date.predict_harvest_date, 'PRE-ORDER' as sell_type
             FROM type_of_product
@@ -93,7 +93,7 @@ module.exports = {
             ;`;
             result = await db.pintodb.query(sql,[process.env.BASE_URL]);
             for(let i=0 ; i<result.length ; i++){
-                startDate = Utility.getLocalTime(Utility.findWeekinMonth(result[i]['predict_harvest_date']));
+                const startDate = Utility.getLocalTime(Utility.findWeekinMonth(result[i]['predict_harvest_date']));
                 let sql = `SELECT sum(ssp_amount) as ssp_amount
                 FROM pinto_project.send_stock_product as ssp
                 JOIN pinto_project.product ON ssp.product_id = product.product_id
@@ -101,7 +101,7 @@ module.exports = {
                 AND type_of_product = ?
                 group by type_of_product
                 ;`;
-                currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result[i]['name']]))[0];
+                const currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result[i]['name']]))[0];
                 result[i]['pre_order_amount'] = currentAmount['ssp_amount'];
                 result[i]['predict_harvest_date'] = Utility.findWeekinMonth(result[i]['predict_harvest_date']);
             }
@@ -110,7 +110,7 @@ module.exports = {
             throw err.message;
         }
     },
-    async getpreOrderProductDetail(productType){
+    async getPreOrderProductDetail(productType){
         try{
             let sql = `SELECT name, name_eng, price_sell, unit, CONCAT(? , picture_of_product) AS picture_of_product, recent_date.predict_harvest_date, 'PRE-ORDER' as sell_type
             FROM type_of_product
@@ -124,9 +124,8 @@ module.exports = {
             ) as recent_date ON recent_date.type_of_product = type_of_product.name
             where stock.product_type = ?
             ;`;
-            result = (await db.pintodb.query(sql,[process.env.BASE_URL,productType]))[0];
-
-            startDate = Utility.getLocalTime(Utility.findWeekinMonth(result['predict_harvest_date']));
+            let result = (await db.pintodb.query(sql,[process.env.BASE_URL,productType]))[0];
+            const startDate = Utility.getLocalTime(Utility.findWeekinMonth(result['predict_harvest_date']));
             sql = `SELECT sum(ssp_amount) as ssp_amount
             FROM pinto_project.send_stock_product as ssp
             JOIN pinto_project.product ON ssp.product_id = product.product_id
@@ -134,7 +133,7 @@ module.exports = {
             AND type_of_product = ?
             group by type_of_product
             ;`;
-            currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result['name']]))[0];
+            const currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result['name']]))[0];
             result['pre_order_amount'] = currentAmount['ssp_amount'];
             result['predict_harvest_date'] = Utility.findWeekinMonth(result['predict_harvest_date']);
 
