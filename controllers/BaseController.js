@@ -80,4 +80,64 @@ module.exports = {
       }
     }
   },
+  //Address
+  async getAddress(req, res){
+    try{
+      const header = req.headers;
+      if(header.userid){
+        result = await UserService.getAddress(header.userid);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${header.userid?'':' userid'}`
+        });
+      }
+      res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async insertAddress(req, res){
+    try{
+      const header = req.headers;
+      const param = req.body
+      if(header.userid && param.addressName && param.address){
+        result = await UserService.insertAddress(header.userid,param.addressName,param.address);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${header.userid?'':' userid'}${param.addressName?'':' addressName'}${param.address?'':' address'}`
+        });
+      }
+      res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async setDefaultAddress(req, res){
+    try{
+      const header = req.headers;
+      const param = req.body
+      if(param.id && header.userid){
+        result = await UserService.setDefaultAddress(param.id,header.userid);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${param.id?'':' id'}${header.userid?'':' userid'}`
+        });
+      }
+      res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
 };

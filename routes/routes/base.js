@@ -28,4 +28,8 @@ module.exports = (app) => {
         throw err.message;
     }
   });
+  //Address
+  app.get('/address',auth.authorization, BaseController.getAddress);
+  app.post('/address/create',auth.authorization, BaseController.insertAddress);
+  app.put('/address/set-default',auth.authorization, BaseController.setDefaultAddress);
 };
