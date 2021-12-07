@@ -10,4 +10,6 @@ module.exports = (app) => {
   app.get('/customer/get-pre-order-product/detail',auth.authorization,CustomerController.getPreOrderProductDetail);
 
   app.post('/customer/pre-order/create',auth.authorization,CustomerController.insertPreOrder);
+
+  app.post('/customer/order/create',auth.authorization,CustomerController.insertOrder);
 };

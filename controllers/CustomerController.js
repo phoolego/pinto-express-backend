@@ -3,7 +3,7 @@ const StockService = require("../services/StockService");
 const ProductService = require("../services/ProductService");
 const PreOrderService = require("../services/PreOrderService");
 const UploadFile = require('../services/FileUpload');
-const { InsertPreOrder } = require("../services/PreOrderService");
+const OrderService = require("../services/OrderService");
 
 module.exports = {
   async registerUser(req, res){
@@ -135,5 +135,27 @@ module.exports = {
   //     }
   //   }
   // },
+  async insertOrder(req, res){
+    try{
+      const param = req.body;
+      const header = req.headers;
+      let orderItem = JSON.parse(param.orderItem);
+      if(param.payment_type && param.delivery_type && header.userid && orderItem && orderItem.length>0){
+          result = await OrderService.insertOrder(header.userid,param.payment_type,param.delivery_type,orderItem);
+          res.send(result);
+      }else{
+          res.status(403).send({
+              message: `missing parameter${param.payment_type?'':' payment_type'}${param.delivery_type?'':' delivery_type'}${header.userid?'':' userId'}${orderItem?'':' orderItem'}`
+              +`${orderItem.length>0?'':' empty orderItem'}`,
+          });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
 };
   

@@ -1,5 +1,16 @@
 const Utility = require('./Utility');
 module.exports = {
+    async getPreOrder(ppoId){
+        try{
+            let sql = `SELECT ppo_id, user_id, type_of_product, amount, status, selling_date
+            FROM product_pre_order
+            WHERE ppo_id = ?
+            ;`;
+            return (await db.pintodb.query(sql,[ppoId]))[0];
+        }catch(err){
+            throw err.message;
+        }
+    },
     async insertPreOrder(productType,amount,userId,sellingDate){
         try{
             let sql = `SELECT preorder_amount
@@ -25,7 +36,7 @@ module.exports = {
             SET status = 'WAIT'
             WHERE ppo_id = ?
             ;`;
-            return remainPreOrder = (await db.pintodb.query(sql,[ppoId]))[0];
+            return await db.pintodb.query(sql,[ppoId]);
         }catch(err){
             throw err.message;
         }
@@ -36,7 +47,18 @@ module.exports = {
             SET status = 'COMPLETED'
             WHERE ppo_id = ?
             ;`;
-            return remainPreOrder = (await db.pintodb.query(sql,[ppoId]))[0];
+            return await db.pintodb.query(sql,[ppoId]);
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async turnCancelPreOrder(ppoId){
+        try{
+            let sql = `UPDATE product_pre_order
+            SET status = 'CANCEL'
+            WHERE ppo_id = ?
+            ;`;
+            return await db.pintodb.query(sql,[ppoId]);
         }catch(err){
             throw err.message;
         }
@@ -64,7 +86,6 @@ module.exports = {
         return (await db.pintodb.query(sql,[productType]))[0]['amount'] || 0;
     },
     async getTotalAmountInScopePreOrder(productType,sellingDate){
-        console.log(productType,sellingDate);
         let sql = `SELECT sum(amount) as amount
         FROM product_pre_order
         where type_of_product = ? AND (status = 'ACTIVE' OR status = 'WAIT')
@@ -73,7 +94,6 @@ module.exports = {
         return (await db.pintodb.query(sql,[productType,sellingDate]))[0]['amount'] || 0;
     },
     async getTotalWaitAmountInScopePreOrder(productType,sellingDate){
-        console.log(productType,sellingDate);
         let sql = `SELECT sum(amount) as amount
         FROM product_pre_order
         where type_of_product = ? AND status = 'WAIT'

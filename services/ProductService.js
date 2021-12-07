@@ -122,7 +122,6 @@ module.exports = {
                 ;`;
                 const currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result[i]['name']]))[0];
                 const totalPreOrderAmount = await PreOrderService.getTotalAmountInScopePreOrder(result[i]['name'],startDate);
-                console.log(totalPreOrderAmount);
                 result[i]['pre_order_amount'] = currentAmount['ssp_amount'] - totalPreOrderAmount;
                 result[i]['predict_harvest_date'] = Utility.findWeekinMonth(result[i]['predict_harvest_date']);
                 if(result[i]['pre_order_amount']<=0){
@@ -159,7 +158,7 @@ module.exports = {
             group by type_of_product
             ;`;
             const currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result['name']]))[0];
-            const totalPreOrderAmount = await PreOrderService.getTotalAmountInScopePreOrder(result[i]['name'],startDate);
+            const totalPreOrderAmount = await PreOrderService.getTotalAmountInScopePreOrder(result['name'],startDate);
             result['pre_order_amount'] = currentAmount['ssp_amount'] - totalPreOrderAmount;
             result['predict_harvest_date'] = Utility.findWeekinMonth(result['predict_harvest_date']);
             if(result['pre_order_amount']<0){
