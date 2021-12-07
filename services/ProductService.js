@@ -110,7 +110,7 @@ module.exports = {
             ) as recent_date ON recent_date.type_of_product = type_of_product.name
             where preorder_amount > 0
             ;`;
-            result = await db.pintodb.query(sql,[process.env.BASE_URL]);
+            let result = await db.pintodb.query(sql,[process.env.BASE_URL]);
             for(let i=0 ; i<result.length ; i++){
                 const startDate = Utility.getLocalTime(Utility.findWeekinMonth(result[i]['predict_harvest_date']));
                 let sql = `SELECT sum(ssp_amount) as ssp_amount
