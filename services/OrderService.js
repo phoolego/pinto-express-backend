@@ -13,6 +13,9 @@ module.exports = {
             throw err.message;
         }
     },
+    async getUserOrder(userId,status){
+
+    },
     async insertOrder(userId,payment_type,delivery_type,orderItem){
         try{
             for(let i=0 ; i<orderItem.length ; i++){
@@ -55,7 +58,7 @@ module.exports = {
             throw err.message;
         }
     },
-    async updateOrderTransaction(order_id,imagePath){
+    async updateOrderTransactionImage(order_id,imagePath){
         let sql =`UPDATE product_order
         SET tran_pic = ?
         WHERE order_id = ?
