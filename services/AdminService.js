@@ -1,3 +1,5 @@
+const OrderService = require("./OrderService");
+const PreOrderService = require("./PreOrderService");
 const StockService = require("./StockService");
 const Utility = require("./Utility");
 module.exports = {
@@ -51,14 +53,28 @@ module.exports = {
     },
     async receiveSendStockProduct(sspId){
         try{
-            let sql = `SELECT ssp_status, type_of_product, ssp_amount
+            let sql = `SELECT ssp_status, type_of_product, ssp_amount, predict_harvest_date
             FROM send_stock_product
             INNER JOIN product ON product.product_id = send_stock_product.product_id
             WHERE ssp_id=?;`;
             const ssp = (await db.pintodb.query(sql,[sspId]))[0];
             if(ssp){
                 if(ssp['ssp_status']=='PREPARE'){
+                    const sellingDate = Utility.getLocalTime(Utility.findWeekinMonth(ssp['predict_harvest_date']));
                     await StockService.setPreorderToSell(ssp['type_of_product'],ssp['ssp_amount'],ssp['ssp_amount']);
+                    const stock = await StockService.getStockDetail(ssp['type_of_product']);
+                    const allWaitPreOrder = await PreOrderService.getTotalWaitAmountInScopePreOrder(ssp['type_of_product'],sellingDate);
+                    const allOrder = await OrderService.getTotalAmountInActiveOrder(ssp['type_of_product']);
+                    const productPreOrder = await PreOrderService.getActivePreOrder(ssp['type_of_product'],sellingDate);
+                    const remainAmount = stock['selling_amount'] - allWaitPreOrder - allOrder;
+                    for(let i=0 ; i<productPreOrder.length ; i++){
+                        if(remainAmount>=productPreOrder[i]['amount']){
+                            await PreOrderService.turnWaitPreOrder(productPreOrder[i]['ppo_id']);
+                            remainAmount -= productPreOrder[i]['amount'];
+                        }else{
+                            break;
+                        }
+                    }
                     sql = `UPDATE send_stock_product
                     SET ssp_status='DELIVERED', ssp_delivered_date=?
                     WHERE ssp_id=?;`;

@@ -8,4 +8,6 @@ module.exports = (app) => {
   app.get('/customer/get-sell-product',auth.authorization,CustomerController.getSellProduct);
   app.get('/customer/get-sell-product/detail',auth.authorization,CustomerController.getSellProductDetail);
   app.get('/customer/get-pre-order-product/detail',auth.authorization,CustomerController.getPreOrderProductDetail);
+
+  app.post('/customer/pre-order/create',auth.authorization,CustomerController.insertPreOrder);
 };

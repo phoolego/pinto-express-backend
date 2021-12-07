@@ -1,8 +1,9 @@
 const UserService = require("../services/UserService");
 const StockService = require("../services/StockService");
-const AdminSerivce = require("../services/AdminService");
 const ProductService = require("../services/ProductService");
+const PreOrderService = require("../services/PreOrderService");
 const UploadFile = require('../services/FileUpload');
+const { InsertPreOrder } = require("../services/PreOrderService");
 
 module.exports = {
   async registerUser(req, res){
@@ -95,5 +96,44 @@ module.exports = {
       }
     }
   },
+  async insertPreOrder(req, res){
+    try{
+      const param = req.body;
+      const header = req.headers;
+      if(param.productType && param.amount && header.userid && param.sellingDate){
+          result = await PreOrderService.insertPreOrder(param.productType,param.amount,header.userid,param.sellingDate);
+          res.send(result);
+      }else{
+          res.status(403).send({
+              message: `missing parameter${param.productType?'':' productType'}${param.amount?'':' amount'}${header.userid?'':' userId'}${param.sellingDate?'':' sellingDate'}`,
+          });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  // async waitPreOrder(req, res){
+  //   try{
+  //     const param = req.body;
+  //     if(param.ppoId){
+  //         result = await PreOrderService.insertPreOrder(param.ppoId);
+  //         res.send(result);
+  //     }else{
+  //         res.status(403).send({
+  //             message: `missing parameter${param.ppoId?'':' ppoId'}`,
+  //         });
+  //     }
+  //   }catch(err){
+  //     if(err.message){
+  //       res.status(500).send({ message: err.message });
+  //     }else{
+  //       res.status(500).send({ message: err });
+  //     }
+  //   }
+  // },
 };
   

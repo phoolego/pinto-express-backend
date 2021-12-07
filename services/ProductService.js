@@ -1,4 +1,6 @@
 const Utility = require('./Utility');
+const OrderService = require('./OrderService');
+const PreOrderService = require('./PreOrderService');
 module.exports = {
     async getProductType(){
         try{
@@ -51,7 +53,17 @@ module.exports = {
             JOIN stock ON stock.product_type = type_of_product.name
             where selling_amount > 0
             ;`;
-            return await db.pintodb.query(sql,[process.env.BASE_URL]);
+            let product = await db.pintodb.query(sql,[process.env.BASE_URL]);
+            for(let i=0 ; i<product.length ; i++){
+                const totalOrderAmount = await OrderService.getTotalAmountInActiveOrder(product[i]['name']);
+                const totalPreOrderAmount = await PreOrderService.getTotalAmountInRecentPreOrder(product[i]['name']);
+                product[i]['selling_amount'] -= totalOrderAmount + totalPreOrderAmount;
+                if(product[i]['selling_amount']<=0){
+                    product.splice(i,1);
+                    i--;
+                }
+            }
+            return product;
         }catch(err){
             throw err.message;
         }
@@ -63,7 +75,14 @@ module.exports = {
             JOIN stock ON stock.product_type = type_of_product.name
             where stock.product_type = ?
             ;`;
-            const productDetail = (await db.pintodb.query(sql,[process.env.BASE_URL,productType]))[0];
+            let productDetail = (await db.pintodb.query(sql,[process.env.BASE_URL,productType]))[0];
+            const totalOrderAmount = await OrderService.getTotalAmountInActiveOrder(productDetail['name']);
+            const totalPreOrderAmount = await PreOrderService.getTotalAmountInRecentPreOrder(productDetail['name']);
+            productDetail['selling_amount'] -= totalOrderAmount + totalPreOrderAmount;
+            if(productDetail['selling_amount']<0){
+                productDetail['selling_amount']=0;
+            }
+
             sql = `SELECT max(plant_date) as plant_date, max(harvest_date) as harvest_date, farm_name
             FROM send_stock_product as ssp
             JOIN product ON ssp.product_id = product.product_id
@@ -102,8 +121,14 @@ module.exports = {
                 group by type_of_product
                 ;`;
                 const currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result[i]['name']]))[0];
-                result[i]['pre_order_amount'] = currentAmount['ssp_amount'];
+                const totalPreOrderAmount = await PreOrderService.getTotalAmountInScopePreOrder(result[i]['name'],startDate);
+                console.log(totalPreOrderAmount);
+                result[i]['pre_order_amount'] = currentAmount['ssp_amount'] - totalPreOrderAmount;
                 result[i]['predict_harvest_date'] = Utility.findWeekinMonth(result[i]['predict_harvest_date']);
+                if(result[i]['pre_order_amount']<=0){
+                    result.splice(i,1);
+                    i--;
+                }
             }
             return result
         }catch(err){
@@ -134,8 +159,12 @@ module.exports = {
             group by type_of_product
             ;`;
             const currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result['name']]))[0];
-            result['pre_order_amount'] = currentAmount['ssp_amount'];
+            const totalPreOrderAmount = await PreOrderService.getTotalAmountInScopePreOrder(result[i]['name'],startDate);
+            result['pre_order_amount'] = currentAmount['ssp_amount'] - totalPreOrderAmount;
             result['predict_harvest_date'] = Utility.findWeekinMonth(result['predict_harvest_date']);
+            if(result['pre_order_amount']<0){
+                result['pre_order_amount']=0;
+            }
 
             sql = `SELECT max(plant_date) as plant_date, max(predict_harvest_date) as harvest_date, farm_name
             FROM send_stock_product as ssp

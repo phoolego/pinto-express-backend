@@ -150,25 +150,6 @@ module.exports = {
       }
     }
   },
-  async receiveSendStockProduct(req, res){
-    try{
-      const param = req.body;
-      if(param.sspId){
-          result = await AdminSerivce.receiveSendStockProduct(param.sspId);
-          res.send(result);
-      }else{
-          res.status(403).send({
-              message: `missing parameter${param.sspId?'':' sspId'}`,
-          });
-      }
-    }catch(err){
-      if(err.message){
-        res.status(500).send({ message: err.message });
-      }else{
-        res.status(500).send({ message: err });
-      }
-    }
-  },
   async paySendStockProduct(req, res){
     try{
       const param = req.body;
