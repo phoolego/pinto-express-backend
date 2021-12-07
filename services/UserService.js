@@ -113,4 +113,43 @@ module.exports = {
             throw err.message;
         }
     },
+    async getAddress(userId){
+        try{
+            let sql = `SELECT id, user_id, address_name, address, in_use
+            FROM user_address
+            WHERE user_id = ?
+            ;`
+            return await db.pintodb.query(sql,[userId]);
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async insertAddress(userId,addressName,address){
+        try{
+            let sql = `INSERT INTO user_address (user_id, address_name, address, in_use)
+            VALUE(?,?,?,0);
+            ;`
+            const insert = await db.pintodb.query(sql,[userId,addressName,address]);
+            this.setDefaultAddress(insert['insertId'],userId);
+            return insert;
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async setDefaultAddress(id,userId){
+        try{
+            let sql = `UPDATE user_address 
+            SET in_use = 0
+            WHERE NOT id = ? AND user_id = ?
+            ;`
+            await db.pintodb.query(sql,[id,userId]);
+            sql = `UPDATE user_address 
+            SET in_use = 1
+            WHERE id = ? AND user_id = ?
+            ;`
+            return await db.pintodb.query(sql,[id,userId]);
+        }catch(err){
+            throw err.message;
+        }
+    }
 }
