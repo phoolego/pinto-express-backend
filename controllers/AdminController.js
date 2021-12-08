@@ -3,6 +3,8 @@ const StockService = require("../services/StockService");
 const AdminSerivce = require("../services/AdminService");
 const ProductService = require("../services/ProductService");
 const UploadFile = require('../services/FileUpload');
+const PreOrderService = require("../services/PreOrderService");
+const OrderService = require("../services/OrderService");
 
 module.exports = {
   async loginEmailAdmin(req, res){
@@ -97,12 +99,12 @@ module.exports = {
     try{
         const param = req.query;
         if(param.productType){
-            result = await StockService.getStockDetail(param.productType);
-            res.send(result);
+          result = await StockService.getStockDetail(param.productType);
+          res.send(result);
         }else{
-            res.status(403).send({
-                message: `missing parameter${param.productType?'':' productType'}`,
-            });
+          res.status(403).send({
+              message: `missing parameter${param.productType?'':' productType'}`,
+          });
         }
     }catch(err){
       if(err.message){
@@ -116,12 +118,12 @@ module.exports = {
     try{
         const param = req.query;
         if(param.productId && param.farmerId){
-            result = await StockService.getFarmStockProduct(param.productId,param.farmerId);
-            res.send(result);
+          result = await StockService.getFarmStockProduct(param.productId,param.farmerId);
+          res.send(result);
         }else{
-            res.status(403).send({
-                message: `missing parameter${param.productType?'':' productType'}${param.farmerId?'':' farmerId'}`,
-            });
+          res.status(403).send({
+              message: `missing parameter${param.productType?'':' productType'}${param.farmerId?'':' farmerId'}`,
+          });
         }
     }catch(err){
       if(err.message){
@@ -135,12 +137,12 @@ module.exports = {
     try{
       const param = req.body;
       if(param.sspId){
-          result = await AdminSerivce.receiveSendStockProduct(param.sspId);
-          res.send(result);
+        result = await AdminSerivce.receiveSendStockProduct(param.sspId);
+        res.send(result);
       }else{
-          res.status(403).send({
-              message: `missing parameter${param.sspId?'':' sspId'}`,
-          });
+        res.status(403).send({
+            message: `missing parameter${param.sspId?'':' sspId'}`,
+        });
       }
     }catch(err){
       if(err.message){
@@ -155,12 +157,12 @@ module.exports = {
       const param = req.body;
       const farmerTransaction = req.file ? UploadFile.getFilePath(req.file.path) : null;
       if(param.sspId,farmerTransaction){
-          result = await AdminSerivce.paySendStockProduct(param.sspId,farmerTransaction);
-          res.send(result);
+        result = await AdminSerivce.paySendStockProduct(param.sspId,farmerTransaction);
+        res.send(result);
       }else{
-          res.status(403).send({
-              message: `missing parameter${param.sspId?'':' sspId'}${farmerTransaction?'':' farmerTransaction'}`,
-          });
+        res.status(403).send({
+            message: `missing parameter${param.sspId?'':' sspId'}${farmerTransaction?'':' farmerTransaction'}`,
+        });
       }
     }catch(err){
       if(err.message){
@@ -222,6 +224,70 @@ module.exports = {
       }else{
         res.status(403).send({
             message: `missing parameter${param.userId?'':' userId'}`,
+        });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async getAllUserPreOrder(req, res){
+    try{
+      const param = req.query;
+      result = await PreOrderService.getAllUserPreOrder(param.status);
+      res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async getAllUserOrder(req, res){
+    try{
+      const param = req.query;
+      result = await OrderService.getAllUserOrder(param.status);
+      res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async validateOrder(req, res){
+    try{
+      const param = req.body;
+      if(param.orderId){
+        result = await OrderService.validateOrder(param.orderId);
+        res.send(result);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${param.orderId?'':' orderId'}`,
+        });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async completeOrder(req, res){
+    try{
+      const param = req.body;
+      if(param.orderId){
+        result = await OrderService.completeOrder(param.orderId);
+        res.send(result);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${param.orderId?'':' orderId'}`,
         });
       }
     }catch(err){

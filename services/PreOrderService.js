@@ -2,8 +2,9 @@ const Utility = require('./Utility');
 module.exports = {
     async getPreOrder(ppoId){
         try{
-            let sql = `SELECT ppo_id, user_id, type_of_product, amount, status, selling_date
+            let sql = `SELECT ppo_id, user_id, type_of_product, amount, status, selling_date, unit
             FROM product_pre_order
+            JOIN type_of_product ON product_pre_order.type_of_product = type_of_product.name
             WHERE ppo_id = ?
             ;`;
             return (await db.pintodb.query(sql,[ppoId]))[0];
@@ -11,14 +12,22 @@ module.exports = {
             throw err.message;
         }
     },
-    async getUserPreOrder(userId,status){
-        let sql = `SELECT ppo_id, user_id, type_of_product, amount, status, selling_date
+    async getUserPreOrder(userId){
+        let sql = `SELECT ppo_id, user_id, type_of_product, amount, status, selling_date, unit
         FROM product_pre_order
-        where user_id = ? `;
-        if(status){
-            sql + `AND status = ?;`
-        }
-        return await db.pintodb.query(sql,[userId,status]);
+        JOIN type_of_product ON product_pre_order.type_of_product = type_of_product.name
+        where user_id = ? AND NOT status = 'COMPLETE'`;
+        return await db.pintodb.query(sql,[userId]);
+    },
+    async getAllUserPreOrder(){
+        let sql = `SELECT ppo_id, user.user_id, type_of_product, amount, status, selling_date, unit, firstname, lastname, email, address, contact
+        FROM product_pre_order
+        JOIN type_of_product ON product_pre_order.type_of_product = type_of_product.name
+        JOIN user ON product_pre_order.user_id = user.user_id
+        WHERE status in ('ACTIVE','WAIT')
+        ORDER BY ppo_id;
+        `;
+        return await db.pintodb.query(sql,[]);
     },
     async insertPreOrder(productType,amount,userId,sellingDate){
         try{

@@ -1,7 +1,7 @@
 const CustomerController = require('../../controllers/CustomerController');
-// const FarmerProductController = require('../../controllers/FarmProductController');
 const auth = require('../../middlewares/auth');
 const UploadFile = require('../../services/FileUpload');
+const uploadOrderTransaction = UploadFile.uploadOrderTransaction.single('tranPic')
 module.exports = (app) => {
   app.post('/customer/register',CustomerController.registerUser);
 
@@ -14,4 +14,13 @@ module.exports = (app) => {
 
   app.get('/customer/order',auth.authorization,CustomerController.getUserOrder);
   app.post('/customer/order/create',auth.authorization,CustomerController.insertOrder);
+  app.put('/customer/order/paid',auth.authorization,function (req, res, next) {
+    uploadOrderTransaction(req, res, function (err) {
+      if(err){
+        res.status(500).send({ message: err.message });
+      }
+      next();
+    })
+  }
+  ,CustomerController.updateOrderTransactionImage);
 };
