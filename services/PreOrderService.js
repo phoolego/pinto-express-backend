@@ -84,7 +84,7 @@ module.exports = {
     async getActivePreOrder(productType, sellingDate){
         let sql = `SELECT ppo_id, user_id, type_of_product, amount, status, selling_date
         FROM product_pre_order
-        where type_of_product = ? AND status = 'ACTIVE' AND selling_date = 
+        where type_of_product = ? AND status = 'ACTIVE' AND selling_date = ?
         ;`;
         return await db.pintodb.query(sql,[productType,sellingDate]);
     },
