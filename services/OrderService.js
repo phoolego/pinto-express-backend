@@ -14,11 +14,11 @@ module.exports = {
         }
     },
     async getUserOrder(userId,status){
-        let sql = `SELECT order_id, payment_type, status, delivery_type, created_date, user_id, tran_pic, delivery_price
+        let sql = `SELECT order_id, payment_type, status, delivery_type, created_date, user_id, tran_pic, delivery_price, destination
         FROM product_order
         where user_id = ? `;
         if(status){
-            sql + `AND status = ?;`
+            sql += `AND status = ?;`
         }
         let order = await db.pintodb.query(sql,[userId,status]);
         for(let i=0 ; i<order.length ; i++){
@@ -29,7 +29,26 @@ module.exports = {
         }
         return order;
     },
-    async insertOrder(userId,paymentType,deliveryType,deliveryPrice,orderItem){
+    async getAllUserOrder(status){
+        let sql = `SELECT order_id, payment_type, status, delivery_type, created_date, user.user_id, tran_pic, delivery_price, destination,
+        firstname, lastname, email, address, contact
+        FROM product_order
+        JOIN user ON product_order.user_id = user.user_id
+        `;
+        if(status){
+            sql += `WHERE status = ?`
+        }
+        sql += `ORDER BY created_date`;
+        let order = await db.pintodb.query(sql,[status]);
+        for(let i=0 ; i<order.length ; i++){
+            let sql = `SELECT order_item_id, order_id, type_of_product, amount, unit, price, ppo_id
+            FROM product_order_item
+            where order_id = ? ;`;
+            order[i]['orderItem'] = await db.pintodb.query(sql,[order[i]['order_id']]);
+        }
+        return order;
+    },
+    async insertOrder(userId,paymentType,deliveryType,deliveryPrice,orderItem,destination){
         try{
             for(let i=0 ; i<orderItem.length ; i++){
                 let sql = `SELECT selling_amount
@@ -47,10 +66,10 @@ module.exports = {
                     throw new Error('not enough product');
                 }
             }
-            let sql =`INSERT INTO product_order (payment_type, status, delivery_type, created_date, user_id, delivery_price)
-            VALUE(?,?,?,?,?,?)
+            let sql =`INSERT INTO product_order (payment_type, status, delivery_type, created_date, user_id, delivery_price, destination)
+            VALUE(?,?,?,?,?,?,?)
             `;
-            const insert = await db.pintodb.query(sql,[paymentType,'WAIT',deliveryType,Utility.getCurrentTime(),userId,deliveryPrice]);
+            const insert = await db.pintodb.query(sql,[paymentType,'WAIT',deliveryType,Utility.getCurrentTime(),userId,deliveryPrice,destination]);
             for(let i=0 ; i<orderItem.length ; i++){
                 let sql = `INSERT INTO product_order_item (order_id, type_of_product, amount, unit, price)
                 VALUE(?,?,?,?,?)
@@ -71,11 +90,25 @@ module.exports = {
             throw err.message;
         }
     },
-    async updateOrderTransactionImage(order_id,imagePath){
+    async updateOrderTransactionImage(orderId,imagePath){
         let sql =`UPDATE product_order
-        SET tran_pic = ?
+        SET tran_pic = ?, status = 'PAID'
         WHERE order_id = ?
         `;
-        return await db.pintodb.query(sql,[imagePath,order_id]);
+        return await db.pintodb.query(sql,[imagePath,orderId]);
+    },
+    async validateOrder(orderId){
+        let sql =`UPDATE product_order
+        SET status = 'VALIDATE'
+        WHERE order_id = ?
+        `;
+        return await db.pintodb.query(sql,[orderId]);
+    },
+    async completeOrder(orderId){
+        let sql =`UPDATE product_order
+        SET status = 'COMPLETE'
+        WHERE order_id = ?
+        `;
+        return await db.pintodb.query(sql,[orderId]);
     }
 }

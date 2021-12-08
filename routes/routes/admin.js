@@ -37,4 +37,10 @@ module.exports = (app) => {
   app.get('/all-farmer',auth.adminAuthorization,AdminController.getAllFarmer);
   app.get('/all-farmer-request',auth.adminAuthorization,AdminController.getAllFarmRequest);
   app.put('/approve-farmer',auth.adminAuthorization,AdminController.approveFarmRequest);
+
+  app.get('/admin/order',auth.adminAuthorization,AdminController.getAllUserOrder);
+  app.put('/admin/order/validate',auth.adminAuthorization,AdminController.validateOrder);
+  app.put('/admin/order/complete',auth.adminAuthorization,AdminController.completeOrder);
+
+  app.get('/admin/pre-order',auth.adminAuthorization,AdminController.getAllUserPreOrder);
 };

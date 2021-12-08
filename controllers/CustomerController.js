@@ -136,25 +136,6 @@ module.exports = {
       }
     }
   },
-  // async waitPreOrder(req, res){
-  //   try{
-  //     const param = req.body;
-  //     if(param.ppoId){
-  //         result = await PreOrderService.insertPreOrder(param.ppoId);
-  //         res.send(result);
-  //     }else{
-  //         res.status(403).send({
-  //             message: `missing parameter${param.ppoId?'':' ppoId'}`,
-  //         });
-  //     }
-  //   }catch(err){
-  //     if(err.message){
-  //       res.status(500).send({ message: err.message });
-  //     }else{
-  //       res.status(500).send({ message: err });
-  //     }
-  //   }
-  // },
   async getUserOrder(req, res){
     try{
       const param = req.query;
@@ -180,13 +161,13 @@ module.exports = {
       const param = req.body;
       const header = req.headers;
       let orderItem = JSON.parse(param.orderItem);
-      if(param.paymentType && param.deliveryType && param.deliveryPrice!=null && header.userid && orderItem && orderItem.length>0){
-          const result = await OrderService.insertOrder(header.userid,param.paymentType,param.deliveryType,param.deliveryPrice,orderItem);
+      if(param.paymentType && param.deliveryType && param.deliveryPrice!=null && param.destination && header.userid && orderItem && orderItem.length>0){
+          const result = await OrderService.insertOrder(header.userid,param.paymentType,param.deliveryType,param.deliveryPrice,orderItem, param.destination);
           res.send(result);
       }else{
           res.status(403).send({
               message: `missing parameter${param.paymentType?'':' paymentType'}${param.deliveryType?'':' deliveryType'}${header.userid?'':' userId'}${orderItem?'':' orderItem'}`
-              +`${orderItem.length>0?'':' empty orderItem'}${param.deliveryPrice!=null?'':' deliveryPrice'}`,
+              +`${param.destination!=null?'':' destination'}${orderItem.length>0?'':' empty orderItem'}${param.deliveryPrice!=null?'':' deliveryPrice'}`,
           });
       }
     }catch(err){
@@ -197,5 +178,25 @@ module.exports = {
       }
     }
   },
+  async updateOrderTransactionImage(req, res){
+    try{
+      const param = req.body;
+      productPic = req.file.path ? UploadFile.getFilePath(req.file.path) : null;
+      if(param.orderId && productPic){
+          result = await OrderService.updateOrderTransactionImage(param.orderId,productPic);
+          res.send(result);
+      }else{
+          res.status(403).send({
+              message: `missing parameter${param.orderId?'':' orderId'}${productPic?'':' productPic'}`
+          });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  }
 };
   
