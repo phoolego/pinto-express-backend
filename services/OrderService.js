@@ -14,13 +14,13 @@ module.exports = {
         }
     },
     async getUserOrder(userId,status){
-        let sql = `SELECT order_id, payment_type, status, delivery_type, created_date, user_id, tran_pic, delivery_price, destination
+        let sql = `SELECT order_id, payment_type, status, delivery_type, created_date, user_id, CONCAT(? , tran_pic) AS tran_pic, delivery_price, destination
         FROM product_order
         where user_id = ? `;
         if(status){
             sql += `AND status = ?;`
         }
-        let order = await db.pintodb.query(sql,[userId,status]);
+        let order = await db.pintodb.query(sql,[process.env.BASE_URL,userId,status]);
         for(let i=0 ; i<order.length ; i++){
             let sql = `SELECT order_item_id, order_id, type_of_product, amount, unit, price, ppo_id
             FROM product_order_item
@@ -30,7 +30,7 @@ module.exports = {
         return order;
     },
     async getAllUserOrder(status){
-        let sql = `SELECT order_id, payment_type, status, delivery_type, created_date, user.user_id, tran_pic, delivery_price, destination,
+        let sql = `SELECT order_id, payment_type, status, delivery_type, created_date, user.user_id, CONCAT(? , tran_pic) AS tran_pic, delivery_price, destination,
         firstname, lastname, email, address, contact
         FROM product_order
         JOIN user ON product_order.user_id = user.user_id
@@ -39,7 +39,7 @@ module.exports = {
             sql += `WHERE status = ?`
         }
         sql += `ORDER BY created_date`;
-        let order = await db.pintodb.query(sql,[status]);
+        let order = await db.pintodb.query(sql,[process.env.BASE_URL,status]);
         for(let i=0 ; i<order.length ; i++){
             let sql = `SELECT order_item_id, order_id, type_of_product, amount, unit, price, ppo_id
             FROM product_order_item
