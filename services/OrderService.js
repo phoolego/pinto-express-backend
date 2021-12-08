@@ -6,7 +6,7 @@ module.exports = {
             let sql = `SELECT sum(amount) as amount
             FROM product_order
             JOIN product_order_item ON product_order_item.order_id = product_order.order_id
-            where product_order_item.type_of_product = ? AND product_order.status = 'ACTIVE'
+            where product_order_item.type_of_product = ? AND product_order.status in ('WAIT','PAID','VERIFIED')
             ;`;
             return (await db.pintodb.query(sql,[productType]))[0]['amount'] || 0;
         }catch(err){
@@ -14,9 +14,22 @@ module.exports = {
         }
     },
     async getUserOrder(userId,status){
-
+        let sql = `SELECT order_id, payment_type, status, delivery_type, created_date, user_id, tran_pic, delivery_price
+        FROM product_order
+        where user_id = ? `;
+        if(status){
+            sql + `AND status = ?;`
+        }
+        let order = await db.pintodb.query(sql,[userId,status]);
+        for(let i=0 ; i<order.length ; i++){
+            let sql = `SELECT order_item_id, order_id, type_of_product, amount, unit, price, ppo_id
+            FROM product_order_item
+            where order_id = ? ;`;
+            order[i]['orderItem'] = await db.pintodb.query(sql,[order[i]['order_id']]);
+        }
+        return order;
     },
-    async insertOrder(userId,payment_type,delivery_type,orderItem){
+    async insertOrder(userId,paymentType,deliveryType,deliveryPrice,orderItem){
         try{
             for(let i=0 ; i<orderItem.length ; i++){
                 let sql = `SELECT selling_amount
@@ -34,12 +47,12 @@ module.exports = {
                     throw new Error('not enough product');
                 }
             }
-            let sql =`INSERT INTO product_order (payment_type, status, delivery_type, created_date, user_id)
-            VALUE(?,?,?,?,?)
+            let sql =`INSERT INTO product_order (payment_type, status, delivery_type, created_date, user_id, delivery_price)
+            VALUE(?,?,?,?,?,?)
             `;
-            const insert = await db.pintodb.query(sql,[payment_type,'WAIT',delivery_type,Utility.getCurrentTime(),userId]);
+            const insert = await db.pintodb.query(sql,[paymentType,'WAIT',deliveryType,Utility.getCurrentTime(),userId,deliveryPrice]);
             for(let i=0 ; i<orderItem.length ; i++){
-                let sql = `INSERT INTO product_order (order_id, type_of_product, amount, unit, price)
+                let sql = `INSERT INTO product_order_item (order_id, type_of_product, amount, unit, price)
                 VALUE(?,?,?,?,?)
                 ;`;
                 await db.pintodb.query(sql,[

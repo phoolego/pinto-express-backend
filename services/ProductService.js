@@ -157,9 +157,9 @@ module.exports = {
             AND type_of_product = ?
             group by type_of_product
             ;`;
-            const currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result['name']]))[0];
+            const currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result['name']]))[0]['ssp_amount'];
             const totalPreOrderAmount = await PreOrderService.getTotalAmountInScopePreOrder(result['name'],startDate);
-            result['pre_order_amount'] = currentAmount['ssp_amount'] - totalPreOrderAmount;
+            result['pre_order_amount'] = currentAmount - totalPreOrderAmount;
             result['predict_harvest_date'] = Utility.findWeekinMonth(result['predict_harvest_date']);
             if(result['pre_order_amount']<0){
                 result['pre_order_amount']=0;

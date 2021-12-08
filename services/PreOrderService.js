@@ -11,13 +11,22 @@ module.exports = {
             throw err.message;
         }
     },
+    async getUserPreOrder(userId,status){
+        let sql = `SELECT ppo_id, user_id, type_of_product, amount, status, selling_date
+        FROM product_pre_order
+        where user_id = ? `;
+        if(status){
+            sql + `AND status = ?;`
+        }
+        return await db.pintodb.query(sql,[userId,status]);
+    },
     async insertPreOrder(productType,amount,userId,sellingDate){
         try{
             let sql = `SELECT preorder_amount
             FROM stock
             WHERE product_type = ?
             ;`;
-            const remainPreOrder = (await db.pintodb.query(sql,[productType]))[0];
+            const remainPreOrder = (await db.pintodb.query(sql,[productType]))[0]['preorder_amount'];
             if(remainPreOrder>=amount){
                 let sql = `INSERT INTO product_pre_order (user_id,type_of_product,amount,status,selling_date)
                 VALUE(?,?,?,'ACTIVE',?)

@@ -96,6 +96,26 @@ module.exports = {
       }
     }
   },
+  async getUserPreOrder(req, res){
+    try{
+      const param = req.query;
+      const header = req.headers;
+      if(header.userid){
+          result = await PreOrderService.getUserPreOrder(header.userid,param.status);
+          res.send(result);
+      }else{
+          res.status(403).send({
+              message: `missing parameter${header.userid?'':' userId'}`,
+          });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
   async insertPreOrder(req, res){
     try{
       const param = req.body;
@@ -135,18 +155,38 @@ module.exports = {
   //     }
   //   }
   // },
+  async getUserOrder(req, res){
+    try{
+      const param = req.query;
+      const header = req.headers;
+      if(header.userid){
+          result = await OrderService.getUserOrder(header.userid,param.status);
+          res.send(result);
+      }else{
+          res.status(403).send({
+              message: `missing parameter${header.userid?'':' userId'}`,
+          });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
   async insertOrder(req, res){
     try{
       const param = req.body;
       const header = req.headers;
       let orderItem = JSON.parse(param.orderItem);
-      if(param.payment_type && param.delivery_type && header.userid && orderItem && orderItem.length>0){
-          result = await OrderService.insertOrder(header.userid,param.payment_type,param.delivery_type,orderItem);
+      if(param.paymentType && param.deliveryType && param.deliveryPrice!=null && header.userid && orderItem && orderItem.length>0){
+          const result = await OrderService.insertOrder(header.userid,param.paymentType,param.deliveryType,param.deliveryPrice,orderItem);
           res.send(result);
       }else{
           res.status(403).send({
-              message: `missing parameter${param.payment_type?'':' payment_type'}${param.delivery_type?'':' delivery_type'}${header.userid?'':' userId'}${orderItem?'':' orderItem'}`
-              +`${orderItem.length>0?'':' empty orderItem'}`,
+              message: `missing parameter${param.paymentType?'':' paymentType'}${param.deliveryType?'':' deliveryType'}${header.userid?'':' userId'}${orderItem?'':' orderItem'}`
+              +`${orderItem.length>0?'':' empty orderItem'}${param.deliveryPrice!=null?'':' deliveryPrice'}`,
           });
       }
     }catch(err){
