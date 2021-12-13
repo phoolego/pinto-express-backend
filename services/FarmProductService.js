@@ -20,7 +20,12 @@ module.exports={
             FROM product
             INNER JOIN type_of_product ON  product.type_of_product = type_of_product.name
             WHERE product_id=?;`;
-            return (await db.pintodb.query(sql,[process.env.BASE_URL,productId]))[0];
+            let product = (await db.pintodb.query(sql,[process.env.BASE_URL,productId]))[0];
+            sql = `SELECT SUM(ssp_amount) AS ssp_amount
+            FROM send_stock_product
+            WHERE product_id=? AND ssp_status IN ('DELIVERED','PAID');`;
+            product['ssp_amount'] = (await db.pintodb.query(sql,[productId]))[0]['ssp_amount'];
+            return product;
         }catch(err){
             throw err.message;
         }
