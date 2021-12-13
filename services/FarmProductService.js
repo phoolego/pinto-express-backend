@@ -20,7 +20,12 @@ module.exports={
             FROM product
             INNER JOIN type_of_product ON  product.type_of_product = type_of_product.name
             WHERE product_id=?;`;
-            return (await db.pintodb.query(sql,[process.env.BASE_URL,productId]))[0];
+            let product = (await db.pintodb.query(sql,[process.env.BASE_URL,productId]))[0];
+            sql = `SELECT SUM(ssp_amount) AS ssp_amount
+            FROM send_stock_product
+            WHERE product_id=? AND ssp_status IN ('DELIVERED','PAID');`;
+            product['ssp_amount'] = (await db.pintodb.query(sql,[productId]))[0]['ssp_amount'];
+            return product;
         }catch(err){
             throw err.message;
         }
@@ -105,8 +110,17 @@ module.exports={
                 WHERE product_id=?;`;
                 const sentProducts = await db.pintodb.query(sql,[productId]);
                 sentProducts.forEach(product => totalSentProduct+=product['ssp_amount']);
-                if((product[0]['harvest_amount'] && product[0]['harvest_amount']-totalSentProduct>=sspAmount)||
-                (product[0]['predict_amount'] && product[0]['predict_amount']-totalSentProduct>=sspAmount)){
+                if(product[0]['harvest_amount']){
+                    if(product[0]['harvest_amount']-totalSentProduct>=sspAmount){
+                        sql = `INSERT INTO send_stock_product (product_id, ssp_amount, ssp_price, ssp_status,ssp_create_date)
+                        VALUE(?,?,?,?,?);`;
+                        const sspResult = await db.pintodb.query(sql,[productId,sspAmount,sspPrice,'PREPARE',Utility.getCurrentTime()]);
+                        const StockResult = await StockService.addPreorderStock(product[0]['name'],sspAmount);
+                        return{sspResult,StockResult};
+                    }else{
+                        throw new Error('This product does not have enough number to send');
+                    }
+                }else if(product[0]['predict_amount'] && product[0]['predict_amount']-totalSentProduct>=sspAmount){
                     sql = `INSERT INTO send_stock_product (product_id, ssp_amount, ssp_price, ssp_status,ssp_create_date)
                     VALUE(?,?,?,?,?);`;
                     const sspResult = await db.pintodb.query(sql,[productId,sspAmount,sspPrice,'PREPARE',Utility.getCurrentTime()]);

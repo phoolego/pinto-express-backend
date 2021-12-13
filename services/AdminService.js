@@ -61,14 +61,14 @@ module.exports = {
             if(ssp){
                 if(ssp['ssp_status']=='PREPARE'){
                     const sellingDate = Utility.getLocalTime(Utility.findWeekinMonth(ssp['predict_harvest_date']));
-                    await StockService.setPreorderToSell(ssp['type_of_product'],ssp['ssp_amount'],ssp['ssp_amount']);
-                    const stock = await StockService.getStockDetail(ssp['type_of_product']);
                     const allWaitPreOrder = await PreOrderService.getTotalWaitAmountInScopePreOrder(ssp['type_of_product'],sellingDate);
                     const allOrder = await OrderService.getTotalAmountInActiveOrder(ssp['type_of_product']);
                     const productPreOrder = await PreOrderService.getActivePreOrder(ssp['type_of_product'],sellingDate);
-                    const remainAmount = stock['selling_amount'] - allWaitPreOrder - allOrder;
+                    await StockService.setPreorderToSell(ssp['type_of_product'],ssp['ssp_amount'],ssp['ssp_amount']);
+                    const stock = await StockService.getStockDetail(ssp['type_of_product']);
+                    let remainAmount = stock['selling_amount'] - allWaitPreOrder - allOrder;
                     for(let i=0 ; i<productPreOrder.length ; i++){
-                        if(remainAmount>=productPreOrder[i]['amount']){
+                        if(remainAmount >= productPreOrder[i]['amount']){
                             await PreOrderService.turnWaitPreOrder(productPreOrder[i]['ppo_id']);
                             remainAmount -= productPreOrder[i]['amount'];
                         }else{
