@@ -11,6 +11,7 @@ module.exports = (app) => {
 
   app.get('/customer/pre-order',auth.authorization,CustomerController.getUserPreOrder);
   app.post('/customer/pre-order/create',auth.authorization,CustomerController.insertPreOrder);
+  app.put('/customer/pre-order/cancel',auth.authorization,CustomerController.cancelPreOrder);
 
   app.get('/customer/order',auth.authorization,CustomerController.getUserOrder);
   app.post('/customer/order/create',auth.authorization,CustomerController.insertOrder);
