@@ -12,6 +12,9 @@ module.exports = {
             if(err.code=='ER_DUP_ENTRY'){
                 throw `this email was used`;
             }
+            else{
+                throw err.message;
+            }
         }
     },
     async getUser(userId){
@@ -21,9 +24,7 @@ module.exports = {
             WHERE user_id = ?;`;
             return (await db.pintodb.query(sql,[userId]))[0];
         }catch(err){
-            if(err.code=='ER_DUP_ENTRY'){
-                throw `this email was used`;
-            }
+            throw err.message;
         }
     },
     async updateUser(firstname, lastname, address, contact, userId){
