@@ -124,6 +124,7 @@ module.exports = {
                 ;`;
                 const currentAmount = (await db.pintodb.query(sql,[startDate,endDate,result[i]['name']]))[0];
                 console.log(startDate);
+                console.log(endDate);
                 console.log(currentAmount);
                 const totalPreOrderAmount = await PreOrderService.getTotalAmountInScopePreOrder(result[i]['name'],startDate);
                 result[i]['pre_order_amount'] = currentAmount['ssp_amount'] - totalPreOrderAmount;

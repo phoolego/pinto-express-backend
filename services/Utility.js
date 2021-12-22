@@ -25,7 +25,7 @@ module.exports = {
             return week2;
         }
         else{
-            return week1
+            return week1;
         }
     },
     findWeekendInMonth(date){
@@ -33,17 +33,17 @@ module.exports = {
         week2 = new Date(date.getFullYear(),date.getMonth(),'14');
         week3 = new Date(date.getFullYear(),date.getMonth(),'21');
         week4 = new Date(date.getFullYear(),date.getMonth()+1,'0');
-        if(date >= week4){
-            return week4;
+        if(date <= week1){
+            return week1;
         }
-        else if(date >= week3){
-            return week3;
-        }
-        else if(date >= week2){
+        else if(date <= week2){
             return week2;
         }
+        else if(date <= week3){
+            return week3;
+        }
         else{
-            return week1
+            return week4;
         }
     }
 }
