@@ -65,8 +65,10 @@ module.exports = {
       try{
         param = req.body
         if(param.firstname && param.lastname && param.email && param.password && param.address && param.contact && param.farmName && param.maxArea){
+          await db.pintodb.query('START TRANSACTION;',[]);
           const user = await UserService.insertUser(param.firstname, param.lastname, param.email, param.password, param.address, param.contact,'REQ-FARMER');
           const farm = await FarmService.insertFarm(param.farmName, param.maxArea, user['insertId']);
+          await db.pintodb.query('COMMIT;',[]);
           res.send({user_id:user['insertId'],farm_id:farm['insertId']});
         }else{
           res.status(403).send({
@@ -75,6 +77,7 @@ module.exports = {
           });
         }
       }catch(err){
+        await db.pintodb.query('ROLLBACK;',[]);
         if(err.message){
           res.status(500).send({ message: err.message });
         }else{

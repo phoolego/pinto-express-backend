@@ -120,6 +120,44 @@ module.exports = {
       }
     }
   },
+  async updateAddress(req, res){
+    try{
+      const param = req.body
+      if(param.id && param.addressName && param.address){
+        result = await UserService.updateAddress(param.id, param.addressName, param.address);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${param.id?'':' id'}${param.addressName?'':' addressName'}${param.address?'':' address'}`
+        });
+      }
+      res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async deleteAddress(req, res){
+    try{
+      const param = req.body
+      if(param.id){
+        result = await UserService.deleteAddress(param.id);
+      }else{
+        res.status(403).send({
+          message: `missing parameter${param.id?'':' id'}`
+        });
+      }
+      res.send(result);
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
   async setDefaultAddress(req, res){
     try{
       const header = req.headers;

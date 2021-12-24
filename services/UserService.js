@@ -7,10 +7,15 @@ module.exports = {
             const hash_pwd = bcrypt.hashSync(password, saltRounds);
             let sql = `INSERT INTO user (firstname, lastname, email, password, address, contact, role)
             VALUES (?, ?, ?, ?, ?, ?, ?);`;
-            return await db.pintodb.query(sql,[firstname, lastname, email, hash_pwd, address, contact, role]);
+            const user = await db.pintodb.query(sql,[firstname, lastname, email, hash_pwd, address, contact, role]);
+            await this.insertAddress(user['insertId'],'Home',address);
+            return user;
         }catch(err){
             if(err.code=='ER_DUP_ENTRY'){
                 throw `this email was used`;
+            }
+            else{
+                throw err.message;
             }
         }
     },
@@ -21,16 +26,32 @@ module.exports = {
             WHERE user_id = ?;`;
             return (await db.pintodb.query(sql,[userId]))[0];
         }catch(err){
-            if(err.code=='ER_DUP_ENTRY'){
-                throw `this email was used`;
-            }
+            throw err.message;
         }
     },
     async updateUser(firstname, lastname, address, contact, userId){
-        let sql = `UPDATE user 
-        SET firstname = ?, lastname = ?, address = ?, contact = ?
-        WHERE user_id = ?;`;
-        return await db.pintodb.query(sql,[firstname, lastname, address, contact, userId]);
+        try{
+            let sql = `UPDATE user 
+            SET firstname = ?, lastname = ?, address = ?, contact = ?
+            WHERE user_id = ?;`;
+            await db.pintodb.query(sql,[firstname, lastname, address, contact, userId]);
+            sql = `UPDATE user_address 
+            SET address = ?
+            WHERE in_use = 1;`;
+            await db.pintodb.query(sql,[address, userId]);
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async setRole(userId,role){
+        try{
+            let sql = `UPDATE user 
+            SET role = ?
+            WHERE user_id = ?;`;
+            return await db.pintodb.query(sql,[role, userId]);
+        }catch(err){
+            throw err.message;
+        }
     },
     async loginEmail(email, password){
         try{
@@ -127,10 +148,33 @@ module.exports = {
     async insertAddress(userId,addressName,address){
         try{
             let sql = `INSERT INTO user_address (user_id, address_name, address, in_use)
-            VALUE(?,?,?,0);
+            VALUE(?,?,?,0)
             ;`
             const insert = await db.pintodb.query(sql,[userId,addressName,address]);
             this.setDefaultAddress(insert['insertId'],userId);
+            return insert;
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async updateAddress(id,addressName,address){
+        try{
+            let sql = `UPDATE user_address 
+            SET address_name = ?, address = ?
+            WHERE id = ?
+            ;`
+            const insert = await db.pintodb.query(sql,[addressName,address,id]);
+            return insert;
+        }catch(err){
+            throw err.message;
+        }
+    },
+    async deleteAddress(id){
+        try{
+            let sql = `DELETE FROM user_address
+            WHERE id = ?
+            ;`
+            const insert = await db.pintodb.query(sql,[id]);
             return insert;
         }catch(err){
             throw err.message;

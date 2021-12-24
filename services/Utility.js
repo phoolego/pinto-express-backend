@@ -10,7 +10,7 @@ module.exports = {
         var localISOTime = (new Date(date - tzoffset)).toISOString().slice(0, 19).replace('T', ' ');
         return localISOTime;
     },
-    findWeekinMonth(date){
+    findWeekInMonth(date){
         week1 = new Date(date.getFullYear(),date.getMonth(),'1');
         week2 = new Date(date.getFullYear(),date.getMonth(),'8');
         week3 = new Date(date.getFullYear(),date.getMonth(),'15');
@@ -25,7 +25,25 @@ module.exports = {
             return week2;
         }
         else{
-            return week1
+            return week1;
+        }
+    },
+    findWeekendInMonth(date){
+        week1 = new Date(date.getFullYear(),date.getMonth(),'7');
+        week2 = new Date(date.getFullYear(),date.getMonth(),'14');
+        week3 = new Date(date.getFullYear(),date.getMonth(),'21');
+        week4 = new Date(date.getFullYear(),date.getMonth()+1,'0');
+        if(date <= week1){
+            return week1;
+        }
+        else if(date <= week2){
+            return week2;
+        }
+        else if(date <= week3){
+            return week3;
+        }
+        else{
+            return week4;
         }
     }
 }

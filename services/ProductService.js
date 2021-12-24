@@ -112,18 +112,19 @@ module.exports = {
             ;`;
             let result = await db.pintodb.query(sql,[process.env.BASE_URL]);
             for(let i=0 ; i<result.length ; i++){
-                const startDate = Utility.getLocalTime(Utility.findWeekinMonth(result[i]['predict_harvest_date']));
+                const startDate = Utility.getLocalTime(Utility.findWeekInMonth(result[i]['predict_harvest_date']));
+                const endDate = Utility.getLocalTime(Utility.findWeekendInMonth(result[i]['predict_harvest_date']));
                 let sql = `SELECT sum(ssp_amount) as ssp_amount
                 FROM pinto_project.send_stock_product as ssp
                 JOIN pinto_project.product ON ssp.product_id = product.product_id
-                where ssp_status = 'PREPARE' AND predict_harvest_date BETWEEN ? AND DATE(? + INTERVAL 6 DAY)
+                where ssp_status = 'PREPARE' AND predict_harvest_date BETWEEN ? AND ?
                 AND type_of_product = ?
                 group by type_of_product
                 ;`;
-                const currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result[i]['name']]))[0];
+                const currentAmount = (await db.pintodb.query(sql,[startDate,endDate,result[i]['name']]))[0];
                 const totalPreOrderAmount = await PreOrderService.getTotalAmountInScopePreOrder(result[i]['name'],startDate);
                 result[i]['pre_order_amount'] = currentAmount['ssp_amount'] - totalPreOrderAmount;
-                result[i]['predict_harvest_date'] = Utility.findWeekinMonth(result[i]['predict_harvest_date']);
+                result[i]['predict_harvest_date'] = Utility.findWeekInMonth(result[i]['predict_harvest_date']);
                 if(result[i]['pre_order_amount']<=0){
                     result.splice(i,1);
                     i--;
@@ -149,18 +150,19 @@ module.exports = {
             where stock.product_type = ?
             ;`;
             let result = (await db.pintodb.query(sql,[process.env.BASE_URL,productType]))[0];
-            const startDate = Utility.getLocalTime(Utility.findWeekinMonth(result['predict_harvest_date']));
+            const startDate = Utility.getLocalTime(Utility.findWeekInMonth(result['predict_harvest_date']));
+            const endDate = Utility.getLocalTime(Utility.findWeekendInMonth(result['predict_harvest_date']));
             sql = `SELECT sum(ssp_amount) as ssp_amount
             FROM pinto_project.send_stock_product as ssp
             JOIN pinto_project.product ON ssp.product_id = product.product_id
-            where ssp_status = 'PREPARE' AND predict_harvest_date BETWEEN ? AND DATE(? + INTERVAL 6 DAY)
+            where ssp_status = 'PREPARE' AND predict_harvest_date BETWEEN ? AND ?
             AND type_of_product = ?
             group by type_of_product
             ;`;
-            const currentAmount = (await db.pintodb.query(sql,[startDate,startDate,result['name']]))[0]['ssp_amount'];
+            const currentAmount = (await db.pintodb.query(sql,[startDate,endDate,result['name']]))[0]['ssp_amount'];
             const totalPreOrderAmount = await PreOrderService.getTotalAmountInScopePreOrder(result['name'],startDate);
             result['pre_order_amount'] = currentAmount - totalPreOrderAmount;
-            result['predict_harvest_date'] = Utility.findWeekinMonth(result['predict_harvest_date']);
+            result['predict_harvest_date'] = Utility.findWeekInMonth(result['predict_harvest_date']);
             if(result['pre_order_amount']<0){
                 result['pre_order_amount']=0;
             }

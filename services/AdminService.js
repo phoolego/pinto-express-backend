@@ -60,7 +60,7 @@ module.exports = {
             const ssp = (await db.pintodb.query(sql,[sspId]))[0];
             if(ssp){
                 if(ssp['ssp_status']=='PREPARE'){
-                    const sellingDate = Utility.getLocalTime(Utility.findWeekinMonth(ssp['predict_harvest_date']));
+                    const sellingDate = Utility.getLocalTime(Utility.findWeekInMonth(ssp['predict_harvest_date']));
                     const allWaitPreOrder = await PreOrderService.getTotalWaitAmountInScopePreOrder(ssp['type_of_product'],sellingDate);
                     const allOrder = await OrderService.getTotalAmountInActiveOrder(ssp['type_of_product']);
                     const productPreOrder = await PreOrderService.getActivePreOrder(ssp['type_of_product'],sellingDate);

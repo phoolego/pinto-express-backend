@@ -11,7 +11,12 @@ module.exports = {
                 throw new Error('this userId is not a farmer');
             }
         }catch(err){
-            throw err.message;
+            if(err.code=='ER_DUP_ENTRY'){
+                throw `this farm name was used`;
+            }
+            else{
+                throw err.message;
+            }
         }
     },
     async requestFarmerRole(email,password){

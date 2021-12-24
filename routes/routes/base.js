@@ -32,4 +32,6 @@ module.exports = (app) => {
   app.get('/address',auth.authorization, BaseController.getAddress);
   app.post('/address/create',auth.authorization, BaseController.insertAddress);
   app.put('/address/set-default',auth.authorization, BaseController.setDefaultAddress);
+  app.put('/address/update',auth.authorization, BaseController.updateAddress);
+  app.delete('/address/delete',auth.authorization, BaseController.deleteAddress);
 };
