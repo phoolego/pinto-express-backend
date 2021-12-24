@@ -10,7 +10,7 @@ module.exports = {
     try{
       param = req.body
       if(param.firstname && param.lastname && param.email && param.password && param.address && param.contact){
-        result = await UserService.insertUser(param.firstname, param.lastname, param.email, param.password, param.address, param.contact, 'CUSTOMER');
+        const result = await UserService.insertUser(param.firstname, param.lastname, param.email, param.password, param.address, param.contact, 'CUSTOMER');
         res.send(result);
       }else{
         res.status(403).send({

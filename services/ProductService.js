@@ -111,7 +111,6 @@ module.exports = {
             where preorder_amount > 0
             ;`;
             let result = await db.pintodb.query(sql,[process.env.BASE_URL]);
-            console.log(result);
             for(let i=0 ; i<result.length ; i++){
                 const startDate = Utility.getLocalTime(Utility.findWeekInMonth(result[i]['predict_harvest_date']));
                 const endDate = Utility.getLocalTime(Utility.findWeekendInMonth(result[i]['predict_harvest_date']));
@@ -123,9 +122,6 @@ module.exports = {
                 group by type_of_product
                 ;`;
                 const currentAmount = (await db.pintodb.query(sql,[startDate,endDate,result[i]['name']]))[0];
-                console.log(startDate);
-                console.log(endDate);
-                console.log(currentAmount);
                 const totalPreOrderAmount = await PreOrderService.getTotalAmountInScopePreOrder(result[i]['name'],startDate);
                 result[i]['pre_order_amount'] = currentAmount['ssp_amount'] - totalPreOrderAmount;
                 result[i]['predict_harvest_date'] = Utility.findWeekInMonth(result[i]['predict_harvest_date']);
