@@ -234,6 +234,63 @@ module.exports = {
       }
     }
   },
+  async rejectFarmRequest(req, res){
+    try{
+      const param = req.body;
+      if(param.userId){
+        result = await UserService.setRole(param.userId,'CUSTOMER');
+        res.send(result);
+      }else{
+        res.status(403).send({
+            message: `missing parameter${param.userId?'':' userId'}`,
+        });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async gainAdminRole(req, res){
+    try{
+      const param = req.body;
+      if(param.userId){
+        result = await UserService.setRole(param.userId,'ADMIN');
+        res.send(result);
+      }else{
+        res.status(403).send({
+            message: `missing parameter${param.userId?'':' userId'}`,
+        });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
+  async setToFarmer(req, res){
+    try{
+      const param = req.body;
+      if(param.userId){
+        result = await UserService.setRole(param.userId,'Farmer');
+        res.send(result);
+      }else{
+        res.status(403).send({
+            message: `missing parameter${param.userId?'':' userId'}`,
+        });
+      }
+    }catch(err){
+      if(err.message){
+        res.status(500).send({ message: err.message });
+      }else{
+        res.status(500).send({ message: err });
+      }
+    }
+  },
   async getAllUserPreOrder(req, res){
     try{
       const param = req.query;

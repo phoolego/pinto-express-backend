@@ -37,6 +37,9 @@ module.exports = (app) => {
   app.get('/all-farmer',auth.adminAuthorization,AdminController.getAllFarmer);
   app.get('/all-farmer-request',auth.adminAuthorization,AdminController.getAllFarmRequest);
   app.put('/approve-farmer',auth.adminAuthorization,AdminController.approveFarmRequest);
+  app.put('/reject-farmer',auth.adminAuthorization,AdminController.rejectFarmRequest);
+  app.put('/gain-admin',auth.adminAuthorization,AdminController.gainAdminRole);
+  app.put('/set-farmer',auth.adminAuthorization,AdminController.setToFarmer);
 
   app.get('/admin/order',auth.adminAuthorization,AdminController.getAllUserOrder);
   app.put('/admin/order/validate',auth.adminAuthorization,AdminController.validateOrder);
