@@ -176,7 +176,6 @@ module.exports = {
             WHERE id = ?
             ;`
             const userAddress = (await db.pintodb.query(sql,[id]))[0];
-            console.log(userAddress);
             if(userAddress['in_use']!=1){
                 sql = `DELETE FROM user_address
                 WHERE id = ?
