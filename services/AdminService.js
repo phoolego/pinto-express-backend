@@ -5,7 +5,7 @@ const Utility = require("./Utility");
 module.exports = {
     async getAllFarmRequest(){
         try{
-            let sql =`SELECT user.user_id, firstname, lastname, email, address, contact, farm_name, max_area
+            let sql =`SELECT user.user_id, firstname, lastname, email, address, contact, farm_name, max_area, role
             FROM user
             LEFT JOIN farmer ON user.user_id = farmer.user_id
             WHERE role = 'REQ-FARMER'`;
@@ -16,10 +16,10 @@ module.exports = {
     },
     async getAllFarmer(){
         try{
-            let sql =`SELECT user.user_id, firstname, lastname, email, address, contact, farm_name, max_area
+            let sql =`SELECT user.user_id, firstname, lastname, email, address, contact, farm_name, max_area, role
             FROM user
             LEFT JOIN farmer ON user.user_id = farmer.user_id
-            WHERE role = 'FARMER'`;
+            WHERE role = 'FARMER' OR role = 'ADMIN'`;
             return await db.pintodb.query(sql);
         }catch(err){
             throw err.message;
