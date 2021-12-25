@@ -171,11 +171,12 @@ module.exports = {
     },
     async deleteAddress(id){
         try{
-            let sql = `SELECT id in_use
+            let sql = `SELECT id, in_use
             FROM user_address
             WHERE id = ?
             ;`
-            const userAddress = await db.pintodb.query(sql,[id]);
+            const userAddress = (await db.pintodb.query(sql,[id]))[0];
+            console.log(userAddress);
             if(userAddress['in_use']!=1){
                 sql = `DELETE FROM user_address
                 WHERE id = ?
